@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Icon } from 'react-native-elements';
-import {View} from 'react-native'
+import { View, Image } from 'react-native'
 import {
   NasdaLoading,
   SafeNasdaArea,
@@ -18,11 +18,9 @@ export default class ReceiveList extends Component {
   static navigationOptions = {
     tabBarLabel: 'Receive',
     tabBarIcon: ({ tintColor, focused }) => (
-      <Ionicons
-        name={focused ? 'ios-cash' : 'ios-cash-outline'}
-        size={26}
-        style={{ color: tintColor }}
-      />
+      focused ?
+        <Image source={require('../../img/tabicon/request_focus.png')} style={{ width: 25, height: 25 }} /> :
+        <Image source={require('../../img/tabicon/request.png')} style={{ width: 25, height: 25 }} />
     ),
   };
 

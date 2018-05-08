@@ -1,6 +1,6 @@
 /* global alert */
 import React, { Component } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, View, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Icon, FormValidationMessage } from 'react-native-elements';
 import {
@@ -21,11 +21,9 @@ export default class Settings extends Component {
   static navigationOptions = {
     tabBarLabel: 'Settings',
     tabBarIcon: ({ tintColor, focused }) => (
-      <Ionicons
-        name={focused ? 'ios-settings' : 'ios-settings-outline'}
-        size={26}
-        style={{ color: tintColor }}
-      />
+      focused ?
+        <Image source={require('../img/tabicon/graph_focus.png')} style={{ width: 25, height: 25 }} /> :
+        <Image source={require('../img/tabicon/graph.png')} style={{ width: 25, height: 25 }} />
     ),
   };
 

@@ -115,7 +115,7 @@ export class NasdaHeader extends Component {
         backgroundColor={NasdaApp.settings.brandingColor}
         height={40}
         statusBarProps={{barStyle: 'light-content'}}
-        outerContainerStyles={{ height: Platform.OS === 'ios' ? 60 : 60 - 24, borderBottomWidth: 0 }}
+        outerContainerStyles={{ height: Platform.OS === 'ios' ? 80 : 80, borderBottomWidth: 0 }}
       />
     );
   }
