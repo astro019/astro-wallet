@@ -26,11 +26,9 @@ export default class WalletsAdd extends Component {
   static navigationOptions = {
     tabBarLabel: 'Wallets',
     tabBarIcon: ({ tintColor, focused }) => (
-      <Ionicons
-        name={focused ? 'ios-briefcase' : 'ios-briefcase-outline'}
-        size={26}
-        style={{ color: tintColor }}
-      />
+      focused ?
+        <Image source={require('../../img/tabicon/wallet_focus.png')} style={{ width: 25, height: 25 }} /> :
+        <Image source={require('../../img/tabicon/wallet.png')} style={{ width: 25, height: 25 }} />
     ),
   };
 

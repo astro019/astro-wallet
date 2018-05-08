@@ -20,11 +20,9 @@ let NasdaApp = require('../../NasdaApp');
 export default class SendCreate extends Component {
   static navigationOptions = {
     tabBarIcon: ({ tintColor, focused }) => (
-      <Ionicons
-        name={focused ? 'ios-list-box' : 'ios-list-box-outline'}
-        size={26}
-        style={{ color: tintColor }}
-      />
+      focused ?
+        <Image source={require('../../img/tabicon/transaction_focus.png')} style={{ width: 25, height: 25 }} /> :
+        <Image source={require('../../img/tabicon/transaction.png')} style={{ width: 25, height: 25 }} />
     ),
   };
 

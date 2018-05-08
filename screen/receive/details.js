@@ -16,11 +16,9 @@ export default class ReceiveDetails extends Component {
   static navigationOptions = {
     tabBarLabel: 'Receive',
     tabBarIcon: ({ tintColor, focused }) => (
-      <Ionicons
-        name={focused ? 'ios-cash' : 'ios-cash-outline'}
-        size={26}
-        style={{ color: tintColor }}
-      />
+      focused ?
+        <Image source={require('../../img/tabicon/request_focus.png')} style={{ width: 25, height: 25 }} /> :
+        <Image source={require('../../img/tabicon/request.png')} style={{ width: 25, height: 25 }} />
     ),
   };
 
