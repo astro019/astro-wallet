@@ -1,5 +1,14 @@
 import React, { Component } from 'react';
-import ReactNative, { Text, ActivityIndicator, View, Image, TextInput, TouchableOpacity, TouchableHighlight } from 'react-native';
+import ReactNative, { 
+  Text, 
+  ActivityIndicator, 
+  View, 
+  Image, 
+  TextInput, 
+  TouchableOpacity, 
+  TouchableHighlight,
+  Dimensions
+} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
 import Feather from 'react-native-vector-icons/Feather'
@@ -27,6 +36,7 @@ let BigNumber = require('bignumber.js');
 let NasdaApp = require('../../NasdaApp');
 
 const btcAddressRx = /^[a-zA-Z0-9]{26,35}$/;
+const { width, height } = Dimensions.get('window')
 
 const weekDay = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY']
 
@@ -69,6 +79,7 @@ export default class SendDetails extends Component {
       amount: '',
       fee: '',
       memo: '',
+      selectedCoinIndex: 1,
     };
 
     EV(EV.enum.CREATE_TRANSACTION_NEW_DESTINATION_ADDRESS, data => {
@@ -230,8 +241,8 @@ export default class SendDetails extends Component {
             style: { color: Color.light_text, fontSize: 14 },
           }}
         />
-        <KeyboardAwareScrollView style={styles.view} containerStyle={{alignItems: 'center'}} innerRef={ref => { this.scroll = ref }}>
-          <NasdaPaper>
+        <KeyboardAwareScrollView style={styles.view} containerStyle={styles.container} innerRef={ref => { this.scroll = ref }}>
+          <NasdaPaper buttons={['NSD', 'BTC']} initialButton={this.state.selectedCoinIndex}>
             <View style={styles.rowBottom} >
               <View style={styles.columnLeft} >
                 <Text style={{paddingLeft: 5, color: Color.text, fontSize: 12}}>SENDING TO</Text>
@@ -317,7 +328,7 @@ export default class SendDetails extends Component {
               <Text style={{color: 'white', fontSize: 16}}>Start</Text>
             </TouchableHighlight>
           </View>
-          <NasdaCard
+          {/* <NasdaCard
             title={'Create Transaction'}
             style={{ alignItems: 'center', flex: 1 }}
           >
@@ -383,8 +394,8 @@ export default class SendDetails extends Component {
                 title="Create"
               />
             </View>
-          </View>
-        </KeyboardAwareScrollView>        
+          </View> */}
+        </KeyboardAwareScrollView>
       </SafeNasdaArea>
     );
   }
@@ -422,8 +433,18 @@ SendDetails.propTypes = {
 
 const styles = {
   view: {
+    width: '100%',
+    height: '100%',
     paddingLeft: 15,
-    paddingRight: 15
+    paddingRight: 15,
+  },
+  container: {
+    width: '100%',
+    height: height,
+    backgroundColor: 'green',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
   },
   columnLeft: {
     flexDirection: 'column',

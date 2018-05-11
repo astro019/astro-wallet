@@ -12,7 +12,16 @@ import {
   ListItem,
 } from 'react-native-elements';
 import { Color } from './screen/Constants.js'
-import { ActivityIndicator, ListView, View, Dimensions, Platform, TouchableHighlight, Image } from 'react-native';
+import { 
+  ActivityIndicator, 
+  ListView, 
+  View, 
+  Dimensions, 
+  Platform, 
+  TouchableHighlight, 
+  TouchableOpacity,
+  Image 
+} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 let NasdaApp = require('./NasdaApp');
 
@@ -201,10 +210,30 @@ export class NasdaWalletItem extends Component {
 }
 
 export class NasdaPaper extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      buttonIndex: this.props.initialButton,
+      buttons: this.props.buttons
+    }
+  }
   render() {
     const iconSize = 60
     return (
       <View style={styles.paper}>
+        <View style={styles.paperButtonGroup} >
+        {
+            this.props.buttons != undefined && this.props.buttons.map((button, index) => (
+              <TouchableOpacity onPress={() => {
+                this.setState({buttonIndex: index})
+              }}>
+                <Text style={[styles.paperButton, { 
+                  backgroundColor: this.state.buttonIndex == index ? Color.mark : 'transparent',
+                  color: this.state.buttonIndex == index ? 'white' : Color.light_text}]}>{button}</Text>
+              </TouchableOpacity>
+            ))
+        }
+        </View>
         <Image style={styles.outline} source={require('./img/outline_top.png')} />
         <View {...this.props} style={[styles.paperContent, this.props.style]} />
         <Image style={styles.outline} source={require('./img/outline_bottom.png')} />
@@ -268,8 +297,24 @@ const styles = {
     justifyContent: 'center'
   },
   paper: {
-    paddingTop: 30,
-    width: '100%'
+    width: '100%',
+  },
+  paperButtonGroup: {
+    width: '100%',
+    height: 50,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-start',
+    padding: 5,
+    backgroundColor: 'red'
+  },
+  paperButton: {
+    fontSize: 12,
+    marginLeft: 3,
+    marginRight: 3,
+    paddingLeft: 3,
+    paddingRight: 3,
+    borderRadius: 3,
   },
   outline: {
     width: '100%',
