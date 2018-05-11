@@ -88,7 +88,7 @@ export default class WalletsList extends Component {
           rightComponent={
             <Icon
               name="settings"
-              color={Color.text}
+              color={Color.light_text}
               size={20}
               // onPress={() => this.props.navigation.navigate('DrawerToggle')}
             />
@@ -96,14 +96,14 @@ export default class WalletsList extends Component {
           leftComponent={
             <Icon
               name="search"
-              color={Color.text}
+              color={Color.light_text}
               size={20}
             // onPress={() => this.props.navigation.navigate('DrawerToggle')}
             />
           }
           centerComponent={{
             text: 'WALLET',
-            style: { color: Color.text, fontSize: 14 },
+            style: { color: Color.light_text, fontSize: 14 },
           }}
         />
         <View style={styles.view} >

@@ -202,6 +202,7 @@ export class NasdaWalletItem extends Component {
 
 export class NasdaPaper extends Component {
   render() {
+    const iconSize = 60
     return (
       <View style={styles.paper}>
         <Image style={styles.outline} source={require('./img/outline_top.png')} />
@@ -279,7 +280,7 @@ const styles = {
     backgroundColor: 'white',
     paddingLeft: 15,
     paddingRight: 15,
-    paddingBottom: 10,
+    paddingBottom: 5,
     flexDirection: 'column',
     alignItems:'center',
     justifyContent: 'flex-end',

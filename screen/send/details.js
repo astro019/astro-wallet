@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
-import { ActivityIndicator, View, Image, TextInput, TouchableOpacity } from 'react-native';
+import ReactNative, { Text, ActivityIndicator, View, Image, TextInput, TouchableOpacity, TouchableHighlight } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
-import { Text, FormValidationMessage, Icon } from 'react-native-elements';
+import Feather from 'react-native-vector-icons/Feather'
+import { FormValidationMessage, Icon } from 'react-native-elements';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { TextField } from 'react-native-material-textfield';
+import Dash from 'react-native-dash';
 import { Color } from '../Constants'
 import {
   NasdaSpacing20,
@@ -15,7 +18,6 @@ import {
   NasdaSpacing,
   NasdaHeader,
   NasdaPaper,
-  NasdaLabel,
   NasdaIcon,
 } from '../../NasdaComponents.js';
 import PropTypes from 'prop-types';
@@ -25,6 +27,8 @@ let BigNumber = require('bignumber.js');
 let NasdaApp = require('../../NasdaApp');
 
 const btcAddressRx = /^[a-zA-Z0-9]{26,35}$/;
+
+const weekDay = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY']
 
 export default class SendDetails extends Component {
   static navigationOptions = {
@@ -62,8 +66,9 @@ export default class SendDetails extends Component {
       fromWallet: fromWallet,
       isLoading: true,
       address: address,
-      amount: '0.000',
+      amount: '',
       fee: '',
+      memo: '',
     };
 
     EV(EV.enum.CREATE_TRANSACTION_NEW_DESTINATION_ADDRESS, data => {
@@ -153,6 +158,11 @@ export default class SendDetails extends Component {
     });
   }
 
+  _scrollToInput(reactNode) {
+    // Add a 'scroll' ref to your ScrollView
+    this.scroll.props.scrollToFocusedInput(reactNode)
+  }
+
   render() {
     if (this.state.isLoading) {
       return (
@@ -172,13 +182,37 @@ export default class SendDetails extends Component {
       );
     }
 
+    let date = new Date()
+    let month = date.getMonth() + 1
+    let year = date.getYear()
+    let day = date.getDate()
+
+    var dateString = ''
+    if (month < 10) dateString += 0
+    dateString += month + '.'
+    if (day < 10) dateString += 0
+    dateString += day + '.' + (year + 1900)
+
+    var timeString = ''
+    var hour = date.getHours()
+    let minute = date.getMinutes()
+    let ampm = hour >= 12 ? 'PM' : 'AM'
+    hour = hour % 12
+    hour = hour ? hour : 12
+    if (hour < 10) timeString += '0'
+    timeString += hour + ':'
+    if (minute < 10) timeString += '0'
+    timeString += minute + ' ' + ampm
+
+    let dayIndex = date.getDay()
+
     return (
       <SafeNasdaArea style={{ flex: 1, paddingTop: 20 }}>
         <NasdaHeader
           rightComponent={
             <Icon
               name="settings"
-              color={Color.text}
+              color={Color.light_text}
               size={20}
             // onPress={() => this.props.navigation.navigate('DrawerToggle')}
             />
@@ -186,27 +220,28 @@ export default class SendDetails extends Component {
           leftComponent={
             <Icon
               name="search"
-              color={Color.text}
+              color={Color.light_text}
               size={20}
             // onPress={() => this.props.navigation.navigate('DrawerToggle')}
             />
           }
           centerComponent={{
             text: 'SEND MONEY',
-            style: { color: Color.text, fontSize: 14 },
+            style: { color: Color.light_text, fontSize: 14 },
           }}
         />
-        <View style={styles.view}>
+        <KeyboardAwareScrollView style={styles.view} containerStyle={{alignItems: 'center'}} innerRef={ref => { this.scroll = ref }}>
           <NasdaPaper>
             <View style={styles.rowBottom} >
               <View style={styles.columnLeft} >
-                <NasdaLabel style={{paddingLeft: 5, color: Color.text}}>SENDING TO</NasdaLabel>
+                <Text style={{paddingLeft: 5, color: Color.text, fontSize: 12}}>SENDING TO</Text>
                 <TextInput
                   style={styles.fullTextInput}
                   underlineColorAndroid='transparent'
                   onChangeText={text => this.setState({ address: text })}
                   placeholder='BTC Address'
                   value={this.state.address}
+                  onSubmitEditing={() => this.amountInput.focusInput()}
                 />
               </View>
               <TouchableOpacity onPress={() => this.props.navigation.navigate('ScanQrAddress')}>
@@ -215,27 +250,73 @@ export default class SendDetails extends Component {
                 />
               </TouchableOpacity>
             </View>
-            {/* <View style={styles.rowBetween} >
-              <NasdaIcon
-                backgroundColor='transparent'
-                icon={<Text>-</Text>}
-              /> */}
+            <View style={styles.amountRowBetween} >
+              <Feather name='minus' color={Color.mark} size={20} />
               <View style={styles.rowCenter}>
-              <TextField
-                  label=''
+                <TextInput
+                  ref={o => this.amountInput = o}
                   style={styles.amountTextInput}
                   onChangeText={this.filterAmountText}//({ amount: text })}
-                  suffix='BTC'
-                  value={this.state.amount + ''}
+                  fontSize={25}
+                  textColor={Color.text}
+                  value={this.state.amount}
+                  placeholder='0.00'
+                  onSubmitEditing={() => this.messageInput.focusInput()}
                 />
-                {/* <Text style={styles.amountTextInput} >BTC</Text> */}
+                <Text style={[styles.amountTextInput, {marginLeft: 5}]} >BTC</Text>
               </View>
-              {/* <NasdaIcon
-                backgroundColor='transparent'
-                icon={<Text>+</Text>}
-              />
-            </View> */}
+              <Feather name='plus' color={Color.mark} size={20} />
+            </View>
+            <Text style={styles.fiatCurrency}>$350</Text>
+            <View style={styles.rowBottom} >
+              <View style={styles.columnLeft} >
+                <Text style={{ paddingLeft: 5, color: Color.text, fontSize: 12 }}>MESSAGE</Text>
+                <View style={styles.fullTextInput} >
+                  <TextInput
+                    ref={o => this.messageInput = o}
+                    activeLineWidth={200}
+                    style={{flex: 1}}
+                    underlineColorAndroid='transparent'
+                    onChangeText={text => this.setState({ memo: text })}
+                    placeholder='Hello, Input message here'
+                    onSubmitEditing={() => this.amountInput.focusInput()}
+                  />
+                  <Text style={{ marginLeft: 5, color: '#c9c9cc'}}>{this.state.memo.length.toString()}</Text>
+                </View>
+              </View>
+            </View>
+            <View style={[styles.rowBottom, {marginTop: 10}]} >
+              <View style={styles.columnLeft} >
+                <Text style={{ color: Color.text, fontSize: 12 }}>TOTAL BALANCE</Text>
+                <Text style={{ color: Color.mark, fontSize: 12 }}>{this.state.fromWallet.getBalance()} BTC</Text>
+              </View>
+              <View style={[styles.columnLeft, {flex: 0.6}]} >
+                <Text style={{ color: Color.text, fontSize: 12 }}>FEE</Text>
+                <Text style={{ color: Color.mark, fontSize: 12 }}>{this.state.fromWallet.getBalance()} BTC</Text>
+              </View>
+              <View style={[styles.columnLeft, { flex: 0.4 }]} >
+                <Text style={{ color: Color.text, fontSize: 12 }}>LIMIT</Text>
+                <Text style={{ color: Color.mark, fontSize: 12 }}>0.5 BTC</Text>
+              </View>
+            </View>
+            <Dash style={{width:'100%', height:1, marginTop: 5, marginBottom: 10}} dashThickness={1} dashColor={Color.light_gray}/>
+            <View style={styles.rowBetween} >
+              <Text style={{ color: Color.text, fontSize: 12 }}>{weekDay[dayIndex]}</Text>
+              <Text style={{ color: Color.text, fontSize: 12 }}>TIME</Text>
+            </View>
+            <View style={styles.rowBetween} >
+              <Text style={{ color: Color.mark, fontSize: 14 }}>{dateString}</Text>
+              <Text style={{ color: Color.mark, fontSize: 14 }}>{timeString}</Text>
+            </View>
           </NasdaPaper>
+
+          <View style={[styles.rowCenter, {width: '100%'}]} >
+            <TouchableHighlight underlayColor={Color.button_underlay}
+              style={styles.button}
+              onPress={() => this.createTransaction()}>
+              <Text style={{color: 'white', fontSize: 16}}>Start</Text>
+            </TouchableHighlight>
+          </View>
           <NasdaCard
             title={'Create Transaction'}
             style={{ alignItems: 'center', flex: 1 }}
@@ -303,7 +384,7 @@ export default class SendDetails extends Component {
               />
             </View>
           </View>
-          </View>        
+        </KeyboardAwareScrollView>        
       </SafeNasdaArea>
     );
   }
@@ -322,6 +403,7 @@ export default class SendDetails extends Component {
       }
     }
     this.setState({amount: amount})
+    console.log(this.state.amount)
   }
 }
 
@@ -355,13 +437,20 @@ const styles = {
     justifyContent: 'center',
     width: '100%',
   },
+  amountRowBetween: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingLeft: 10,
+    paddingRight: 10,
+    marginTop: 50,
+  },
   rowBetween: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    paddingLeft: 20,
-    paddingRight: 20,
   },
   rowCenter: {
     flexDirection: 'row',
@@ -371,13 +460,27 @@ const styles = {
   fullTextInput: { 
     width: '100%',
     borderBottomColor: Color.light_gray,
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   amountTextInput: {
+    maxWidth: '80%',
     color: Color.text,
     fontSize: 25,
-    paddingLeft: 5,
-    paddingRight: 5,
-    // maxWidth: 100,
+    minWidth: 50,
+  },
+  fiatCurrency: {
+    color: Color.light_text,
+    fontSize: 20,
+  },
+  button: {
+    width: '80%',
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: Color.button,
+    marginTop: 20,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 }
