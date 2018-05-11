@@ -68,7 +68,7 @@ export class NasdaText extends Component {
 
 export class NasdaLabel extends Component {
   render() {
-    var color = Color.text
+    var color = Color.light_text
     if (this.props.style !== undefined && this.props.style.color !== undefined) {
       color = this.props.style.color
     }
@@ -212,6 +212,24 @@ export class NasdaPaper extends Component {
   }
 }
 
+export class NasdaIcon extends Component {
+  render() {
+    var size = 30
+    if (this.props.size !== undefined) {
+      size = this.props.size
+    }
+    var bkColor = Color.mark
+    if (this.props.backgroundColor !== undefined) {
+      bkColor = this.props.backgroundColor
+    }
+    return (
+      <View style={{ width: size, height: size, borderRadius: size, backgroundColor: bkColor, alignItems: 'center', justifyContent: 'center'}}>
+        {this.props.icon}
+      </View>
+    );
+  }
+}
+
 const styles = {
   listItem: {
     borderRadius: 10,
@@ -262,5 +280,9 @@ const styles = {
     paddingLeft: 15,
     paddingRight: 15,
     paddingBottom: 10,
+    flexDirection: 'column',
+    alignItems:'center',
+    justifyContent: 'flex-end',
+    height: 350,
   }
 }

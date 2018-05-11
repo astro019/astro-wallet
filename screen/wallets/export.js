@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, View, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import QRCode from 'react-native-qrcode';
 import {
@@ -16,11 +16,9 @@ let NasdaApp = require('../../NasdaApp');
 export default class WalletExport extends Component {
   static navigationOptions = {
     tabBarIcon: ({ tintColor, focused }) => (
-      <Ionicons
-        name={focused ? 'ios-briefcase' : 'ios-briefcase-outline'}
-        size={26}
-        style={{ color: tintColor }}
-      />
+      focused ?
+        <Image source={require('../../img/tabicon/wallet_focus.png')} style={{ width: 25, height: 25 }} /> :
+        <Image source={require('../../img/tabicon/wallet.png')} style={{ width: 25, height: 25 }} />
     ),
   };
 

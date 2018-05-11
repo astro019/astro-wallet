@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
   NasdaButton,

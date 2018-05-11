@@ -6,12 +6,20 @@ import {
   Button,
   View,
   TouchableOpacity,
+  Image
 } from 'react-native';
 import { Camera, Permissions } from 'expo';
 import PropTypes from 'prop-types';
 let EV = require('../../events');
 
 export default class CameraExample extends React.Component {
+  static navigationOptions = {
+    tabBarIcon: ({ tintColor, focused }) => (
+      focused ?
+        <Image source={require('../../img/tabicon/send_focus.png')} style={{ width: 25, height: 25 }} /> :
+        <Image source={require('../../img/tabicon/send.png')} style={{ width: 25, height: 25 }} />
+    ),
+  };
   state = {
     isLoading: false,
     hasCameraPermission: null,

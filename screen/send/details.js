@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, View, Image, TextInput, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Text, FormValidationMessage } from 'react-native-elements';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
+import { Text, FormValidationMessage, Icon } from 'react-native-elements';
+import { TextField } from 'react-native-material-textfield';
+import { Color } from '../Constants'
 import {
   NasdaSpacing20,
   NasdaButton,
@@ -10,6 +13,10 @@ import {
   NasdaText,
   NasdaFormInput,
   NasdaSpacing,
+  NasdaHeader,
+  NasdaPaper,
+  NasdaLabel,
+  NasdaIcon,
 } from '../../NasdaComponents.js';
 import PropTypes from 'prop-types';
 const bip21 = require('bip21');
@@ -55,7 +62,7 @@ export default class SendDetails extends Component {
       fromWallet: fromWallet,
       isLoading: true,
       address: address,
-      amount: '',
+      amount: '0.000',
       fee: '',
     };
 
@@ -167,76 +174,154 @@ export default class SendDetails extends Component {
 
     return (
       <SafeNasdaArea style={{ flex: 1, paddingTop: 20 }}>
-        <NasdaSpacing />
-        <NasdaCard
-          title={'Create Transaction'}
-          style={{ alignItems: 'center', flex: 1 }}
-        >
-          <NasdaFormInput
-            style={{ width: 250 }}
-            onChangeText={text => this.setState({ address: text })}
-            placeholder={'receiver address here'}
-            value={this.state.address}
-          />
-
-          <NasdaFormInput
-            onChangeText={text => this.setState({ amount: text })}
-            keyboardType={'numeric'}
-            placeholder={'amount to send (in BTC)'}
-            value={this.state.amount + ''}
-          />
-
-          <NasdaFormInput
-            onChangeText={text => this.setState({ fee: text })}
-            keyboardType={'numeric'}
-            placeholder={'plus transaction fee (in BTC)'}
-            value={this.state.fee + ''}
-          />
-
-          <NasdaFormInput
-            onChangeText={text => this.setState({ memo: text })}
-            placeholder={'memo to self'}
-            value={this.state.memo}
-          />
-
-          <NasdaSpacing20 />
-          <NasdaText>
-            Remaining balance:{' '}
-            {this.recalculateAvailableBalance(
-              this.state.fromWallet.getBalance(),
-              this.state.amount,
-              this.state.fee,
-            )}{' '}
-            BTC
-          </NasdaText>
-        </NasdaCard>
-
-        <FormValidationMessage>{this.state.errorMessage}</FormValidationMessage>
-
-        <View style={{ flex: 1, flexDirection: 'row', paddingTop: 20 }}>
-          <View style={{ flex: 0.33 }}>
-            <NasdaButton
-              onPress={() => this.props.navigation.goBack()}
-              title="Cancel"
+        <NasdaHeader
+          rightComponent={
+            <Icon
+              name="settings"
+              color={Color.text}
+              size={20}
+            // onPress={() => this.props.navigation.navigate('DrawerToggle')}
             />
-          </View>
-          <View style={{ flex: 0.33 }}>
-            <NasdaButton
-              icon={{ name: 'qrcode', type: 'font-awesome' }}
-              style={{}}
-              title="scan"
-              onPress={() => this.props.navigation.navigate('ScanQrAddress')}
+          }
+          leftComponent={
+            <Icon
+              name="search"
+              color={Color.text}
+              size={20}
+            // onPress={() => this.props.navigation.navigate('DrawerToggle')}
             />
-          </View>
-          <View style={{ flex: 0.33 }}>
-            <NasdaButton
-              onPress={() => this.createTransaction()}
-              title="Create"
+          }
+          centerComponent={{
+            text: 'SEND MONEY',
+            style: { color: Color.text, fontSize: 14 },
+          }}
+        />
+        <View style={styles.view}>
+          <NasdaPaper>
+            <View style={styles.rowBottom} >
+              <View style={styles.columnLeft} >
+                <NasdaLabel style={{paddingLeft: 5, color: Color.text}}>SENDING TO</NasdaLabel>
+                <TextInput
+                  style={styles.fullTextInput}
+                  underlineColorAndroid='transparent'
+                  onChangeText={text => this.setState({ address: text })}
+                  placeholder='BTC Address'
+                  value={this.state.address}
+                />
+              </View>
+              <TouchableOpacity onPress={() => this.props.navigation.navigate('ScanQrAddress')}>
+                <NasdaIcon
+                  icon={<SimpleLineIcons name='camera' color='white' size={20} />}
+                />
+              </TouchableOpacity>
+            </View>
+            {/* <View style={styles.rowBetween} >
+              <NasdaIcon
+                backgroundColor='transparent'
+                icon={<Text>-</Text>}
+              /> */}
+              <View style={styles.rowCenter}>
+              <TextField
+                  label=''
+                  style={styles.amountTextInput}
+                  onChangeText={this.filterAmountText}//({ amount: text })}
+                  suffix='BTC'
+                  value={this.state.amount + ''}
+                />
+                {/* <Text style={styles.amountTextInput} >BTC</Text> */}
+              </View>
+              {/* <NasdaIcon
+                backgroundColor='transparent'
+                icon={<Text>+</Text>}
+              />
+            </View> */}
+          </NasdaPaper>
+          <NasdaCard
+            title={'Create Transaction'}
+            style={{ alignItems: 'center', flex: 1 }}
+          >
+            <NasdaFormInput
+              style={{ width: 250 }}
+              onChangeText={text => this.setState({ address: text })}
+              placeholder={'receiver address here'}
+              value={this.state.address}
             />
+
+            <NasdaFormInput
+              onChangeText={text => this.setState({ amount: text })}
+              keyboardType={'numeric'}
+              placeholder={'amount to send (in BTC)'}
+              value={this.state.amount + ''}
+            />
+
+            <NasdaFormInput
+              onChangeText={text => this.setState({ fee: text })}
+              keyboardType={'numeric'}
+              placeholder={'plus transaction fee (in BTC)'}
+              value={this.state.fee + ''}
+            />
+
+            <NasdaFormInput
+              onChangeText={text => this.setState({ memo: text })}
+              placeholder={'memo to self'}
+              value={this.state.memo}
+            />
+
+            <NasdaSpacing20 />
+            <NasdaText>
+              Remaining balance:{' '}
+              {this.recalculateAvailableBalance(
+                this.state.fromWallet.getBalance(),
+                this.state.amount,
+                this.state.fee,
+              )}{' '}
+              BTC
+            </NasdaText>
+          </NasdaCard>
+
+          <FormValidationMessage>{this.state.errorMessage}</FormValidationMessage>
+
+          <View style={{ flex: 1, flexDirection: 'row', paddingTop: 20 }}>
+            <View style={{ flex: 0.33 }}>
+              <NasdaButton
+                onPress={() => this.props.navigation.goBack()}
+                title="Cancel"
+              />
+            </View>
+            <View style={{ flex: 0.33 }}>
+              <NasdaButton
+                icon={{ name: 'qrcode', type: 'font-awesome' }}
+                style={{}}
+                title="scan"
+                onPress={() => this.props.navigation.navigate('ScanQrAddress')}
+              />
+            </View>
+            <View style={{ flex: 0.33 }}>
+              <NasdaButton
+                onPress={() => this.createTransaction()}
+                title="Create"
+              />
+            </View>
           </View>
-        </View>
+          </View>        
       </SafeNasdaArea>
     );
+  }
+
+  filterAmountText = (text) => {
+    // const numbers = text.match(/\\d+\\.?\\d*/g)
+    // console.log(numbers)
+    var hasPoint = false
+    var amount = ""
+    for (i = 0; i<text.length; i++) {
+      if (text[i] == '.' && hasPoint == false) {
+        hasPoint = true
+        amount += text[i]
+      } else if (text[i] >= '0' && text[i] <= '9') {
+        amount += text[i]
+      }
+    }
+    this.setState({amount: amount})
   }
 }
 
@@ -252,3 +337,47 @@ SendDetails.propTypes = {
     }),
   }),
 };
+
+const styles = {
+  view: {
+    paddingLeft: 15,
+    paddingRight: 15
+  },
+  columnLeft: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    flex: 1,
+  },
+  rowBottom: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  rowBetween: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingLeft: 20,
+    paddingRight: 20,
+  },
+  rowCenter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fullTextInput: { 
+    width: '100%',
+    borderBottomColor: Color.light_gray,
+    borderBottomWidth: 1
+  },
+  amountTextInput: {
+    color: Color.text,
+    fontSize: 25,
+    paddingLeft: 5,
+    paddingRight: 5,
+    // maxWidth: 100,
+  }
+}

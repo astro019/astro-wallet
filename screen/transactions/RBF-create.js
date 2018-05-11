@@ -1,6 +1,6 @@
 /** @type {AppStorage}  */
 import React, { Component } from 'react';
-import { TextInput } from 'react-native';
+import { TextInput, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Text, FormValidationMessage } from 'react-native-elements';
 import {

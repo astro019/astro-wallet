@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TextInput } from 'react-native';
+import { TextInput, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import QRCode from 'react-native-qrcode';
 import {

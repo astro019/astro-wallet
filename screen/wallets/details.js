@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ActivityIndicator, View, ScrollView } from 'react-native';
+import { ActivityIndicator, View, ScrollView, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
   NasdaSpacing,

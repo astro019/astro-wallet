@@ -1,6 +1,6 @@
 import { SegwitP2SHWallet } from '../../class';
 import React, { Component } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, View, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
   NasdaSpacing,

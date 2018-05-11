@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { TextInput } from 'react-native';
+import { TextInput, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Text, FormValidationMessage } from 'react-native-elements';
+import { Text, FormValidationMessage, Icon } from 'react-native-elements';
 import {
   NasdaLoading,
   NasdaSpacing20,
@@ -10,6 +10,7 @@ import {
   NasdaCard,
   NasdaText,
   NasdaSpacing,
+  NasdaHeader,
 } from '../../NasdaComponents.js';
 import PropTypes from 'prop-types';
 let BigNumber = require('bignumber.js');
@@ -126,8 +127,29 @@ export default class SendCreate extends Component {
   render() {
     if (this.state.isError) {
       return (
-        <SafeNasdaArea style={{ flex: 1, paddingTop: 20 }}>
-          <NasdaSpacing />
+        <SafeNasdaArea>
+          <NasdaHeader
+            rightComponent={
+              <Icon
+                name="settings"
+                color={Color.text}
+                size={20}
+              // onPress={() => this.props.navigation.navigate('DrawerToggle')}
+              />
+            }
+            leftComponent={
+              <Icon
+                name="search"
+                color={Color.text}
+                size={20}
+              // onPress={() => this.props.navigation.navigate('DrawerToggle')}
+              />
+            }
+            centerComponent={{
+              text: 'WALLET',
+              style: { color: Color.text, fontSize: 14 },
+            }}
+          />
           <NasdaCard
             title={'Create Transaction'}
             style={{ alignItems: 'center', flex: 1 }}
@@ -152,8 +174,30 @@ export default class SendCreate extends Component {
     }
 
     return (
-      <SafeNasdaArea style={{ flex: 1, paddingTop: 20 }}>
-        <NasdaSpacing />
+      <SafeNasdaArea>
+        <NasdaHeader
+          rightComponent={
+            <Icon
+              name="settings"
+              color={Color.text}
+              size={20}
+            // onPress={() => this.props.navigation.navigate('DrawerToggle')}
+            />
+          }
+          leftComponent={
+            <Icon
+              name="search"
+              color={Color.text}
+              size={20}
+            // onPress={() => this.props.navigation.navigate('DrawerToggle')}
+            />
+          }
+          centerComponent={{
+            text: 'WALLET',
+            style: { color: Color.text, fontSize: 14 },
+          }}
+        />
+
         <NasdaCard
           title={'Create Transaction'}
           style={{ alignItems: 'center', flex: 1 }}
