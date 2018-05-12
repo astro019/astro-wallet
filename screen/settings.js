@@ -20,11 +20,18 @@ let prompt = require('../prompt');
 export default class Settings extends Component {
   static navigationOptions = {
     tabBarLabel: 'Settings',
-    tabBarIcon: ({ tintColor, focused }) => (
-      focused ?
-        <Image source={require('../img/tabicon/graph_focus.png')} style={{ width: 25, height: 25 }} /> :
-        <Image source={require('../img/tabicon/graph.png')} style={{ width: 25, height: 25 }} />
-    ),
+    tabBarIcon: ({ tintColor, focused }) =>
+      focused ? (
+        <Image
+          source={require('../img/tabIcon/graph_focus.png')}
+          style={{ width: 25, height: 25 }}
+        />
+      ) : (
+        <Image
+          source={require('../img/tabIcon/graph.png')}
+          style={{ width: 25, height: 25 }}
+        />
+      ),
   };
 
   constructor(props) {

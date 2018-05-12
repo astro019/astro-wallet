@@ -18,11 +18,18 @@ let EV = require('../../events');
 export default class CameraExample extends React.Component {
   static navigationOptions = {
     tabBarLabel: 'Wallets',
-    tabBarIcon: ({ tintColor, focused }) => (
-      focused ?
-        <Image source={require('../../img/tabicon/wallet_focus.png')} style={{ width: 25, height: 25 }} /> :
-        <Image source={require('../../img/tabicon/wallet.png')} style={{ width: 25, height: 25 }} />
-    ),
+    tabBarIcon: ({ tintColor, focused }) =>
+      focused ? (
+        <Image
+          source={require('../../img/tabIcon/wallet_focus.png')}
+          style={{ width: 25, height: 25 }}
+        />
+      ) : (
+        <Image
+          source={require('../../img/tabIcon/wallet.png')}
+          style={{ width: 25, height: 25 }}
+        />
+      ),
   };
 
   state = {

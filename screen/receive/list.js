@@ -17,11 +17,18 @@ let EV = require('../../events');
 export default class ReceiveList extends Component {
   static navigationOptions = {
     tabBarLabel: 'Receive',
-    tabBarIcon: ({ tintColor, focused }) => (
-      focused ?
-        <Image source={require('../../img/tabicon/request_focus.png')} style={{ width: 25, height: 25 }} /> :
-        <Image source={require('../../img/tabicon/request.png')} style={{ width: 25, height: 25 }} />
-    ),
+    tabBarIcon: ({ tintColor, focused }) =>
+      focused ? (
+        <Image
+          source={require('../../img/tabIcon/request_focus.png')}
+          style={{ width: 25, height: 25 }}
+        />
+      ) : (
+        <Image
+          source={require('../../img/tabIcon/request.png')}
+          style={{ width: 25, height: 25 }}
+        />
+      ),
   };
 
   constructor(props) {

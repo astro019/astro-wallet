@@ -211,7 +211,7 @@ export class NasdaWalletItem extends Component {
 
 export class NasdaPaper extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       buttonIndex: this.props.initialOption,
       buttons: this.props.buttons,
@@ -224,17 +224,24 @@ export class NasdaPaper extends Component {
         <View style={styles.paperButtonGroup}>
           {this.props.options != undefined && this.props.options.map((button, index) => (
             <TouchableOpacity
-              onPress={() => (
-                this.setState({ buttonIndex: index })
-                if (this.props.onChangeOption != undefined) {
-                  this.props.onChangeOption(index)
-                }
-              )
-            }>
-              <Text style={[styles.paperButton, {
-                backgroundColor: this.state.buttonIndex == index ? Color.mark : 'transparent',
-                color: this.state.buttonIndex == index ? 'white' : Color.light_text
-              }]}>{button}</Text>
+              onPress={() => {
+                  this.setState({ buttonIndex: index })
+                  if (this.props.onChangeOption !== undefined) {
+                    this.props.onChangeOption(index)
+                  }
+                }}
+             >
+              <Text
+                style={[
+                  styles.paperButton,
+                  {
+                    backgroundColor: this.state.buttonIndex == index ? Color.mark : 'transparent',
+                    color: this.state.buttonIndex == index ? 'white' : Color.light_text,
+                  }
+                ]}
+              >
+                {button}
+              </Text>
             </TouchableOpacity>
             ))
           }
@@ -246,7 +253,14 @@ export class NasdaPaper extends Component {
           source={require('./img/outline_bottom.png')}
         />
         <View style={styles.paperHeader} >
-          <View style={[styles.paperCircle, { backgroundColor: this.state.circleColor }]} />
+          <View
+            style={[
+              styles.paperCircle,
+              { backgroundColor: this.state.circleColor },
+            ]}
+          >
+            {this.props.icon !== undefined && this.props.icon}
+          </View>
         </View>
       </View>
     );
@@ -255,16 +269,25 @@ export class NasdaPaper extends Component {
 
 export class NasdaIcon extends Component {
   render() {
-    var size = 30
+    var size = 30;
     if (this.props.size !== undefined) {
-      size = this.props.size
+      size = this.props.size;
     }
-    var bkColor = Color.mark
+    var bkColor = Color.mark;
     if (this.props.backgroundColor !== undefined) {
-      bkColor = this.props.backgroundColor
+      bkColor = this.props.backgroundColor;
     }
     return (
-      <View style={{ width: size, height: size, borderRadius: size, backgroundColor: bkColor, alignItems: 'center', justifyContent: 'center' }}>
+      <View
+        style={{
+          width: size,
+          height: size,
+          borderRadius: size,
+          backgroundColor: bkColor,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         {this.props.icon}
       </View>
     );
@@ -323,6 +346,8 @@ const styles = {
     width: 80,
     height: 80,
     borderRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   paperButtonGroup: {
     width: '100%',

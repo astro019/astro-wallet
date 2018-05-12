@@ -15,6 +15,7 @@ import { Icon } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Dash from 'react-native-dash';
 import { Color } from '../Constants';
+import { getDate } from '../customAPI';
 import {
   SafeNasdaArea,
   NasdaHeader,
@@ -30,27 +31,17 @@ let NasdaApp = require('../../NasdaApp');
 const btcAddressRx = /^[a-zA-Z0-9]{26,35}$/;
 const { height } = Dimensions.get('window');
 
-const weekDay = [
-  'SUNDAY',
-  'MONDAY',
-  'TUESDAY',
-  'WEDNESDAY',
-  'THURSDAY',
-  'FRIDAY',
-  'SATURDAY',
-]
-
 export default class SendDetails extends Component {
   static navigationOptions = {
     tabBarIcon: ({ tintColor, focused }) =>
       focused ? (
         <Image
-          source={require('../../img/tabicon/send_focus.png')} 
+          source={require('../../img/tabIcon/send_focus.png')}
           style={{ width: 25, height: 25 }}
         />
       ) : (
         <Image
-          source={require('../../img/tabicon/send.png')}
+          source={require('../../img/tabIcon/send.png')}
           style={{ width: 25, height: 25 }}
         />
       ),
@@ -201,29 +192,7 @@ export default class SendDetails extends Component {
       );
     }
 
-    let date = new Date();
-    let month = date.getMonth() + 1;
-    let year = date.getYear();
-    let day = date.getDate();
-
-    var dateString = '';
-    if (month < 10) dateString += 0;
-    dateString += month + '.';
-    if (day < 10) dateString += 0;
-    dateString += day + '.' + (year + 1900);
-
-    var timeString = '';
-    var hour = date.getHours();
-    let minute = date.getMinutes();
-    let ampm = hour >= 12 ? 'PM' : 'AM';
-    hour = hour % 12;
-    if (hour === 0) hour = 12;
-    if (hour < 10) timeString += '0';
-    timeString += hour + ':';
-    if (minute < 10) timeString += '0';
-    timeString += minute + ' ' + ampm;
-
-    let dayIndex = date.getDay();
+    const { dateString, timeString, weekDay } = getDate();
 
     return (
       <SafeNasdaArea style={{ flex: 1, paddingTop: 20 }}>
@@ -249,7 +218,11 @@ export default class SendDetails extends Component {
             style: { color: Color.light_text, fontSize: 14 },
           }}
         />
-        <KeyboardAwareScrollView style={styles.view} containerStyle={styles.container} innerRef={ref => { this.scroll = ref }}>
+        <KeyboardAwareScrollView
+          style={styles.view}
+          containerStyle={styles.container}
+          innerRef={ref => (this.scroll = ref)}
+        >
           <NasdaPaper
             options={this.state.coins}
             initialOption={this.state.selectedCoinIndex}
@@ -258,6 +231,7 @@ export default class SendDetails extends Component {
                 selectedCoinIndex: index,
               })
             }
+            icon={<SimpleLineIcons name="camera" color="white" size={20} />}
           >
             <View style={styles.rowBottom} >
               <View style={styles.columnLeft} >
@@ -268,7 +242,7 @@ export default class SendDetails extends Component {
                     fontSize: 12,
                   }}
                 >
-                SENDING TO
+                  SENDING TO
                 </Text>
                 <TextInput
                   style={styles.fullTextInput}
@@ -325,8 +299,9 @@ export default class SendDetails extends Component {
                     paddingLeft: 5,
                     color: Color.text,
                     fontSize: 12,
-                  }}>
-                    MESSAGE
+                  }}
+                >
+                  MESSAGE
                 </Text>
                 <View style={styles.fullTextInput} >
                   <TextInput
@@ -368,29 +343,47 @@ export default class SendDetails extends Component {
               </View>
               <View style={[styles.columnLeft, { flex: 0.6 }]}>
                 <Text style={{ color: Color.text, fontSize: 12 }}>FEE</Text>
-                <Text style={{ color: Color.mark, fontSize: 12 }}>{this.state.fromWallet.getBalance()} {this.state.coins[this.state.selectedCoinIndex]}</Text>
+                <Text style={{ color: Color.mark, fontSize: 12 }}>
+                  {this.state.fromWallet.getBalance()} {this.state.coins[this.state.selectedCoinIndex]}
+                </Text>
               </View>
-              <View style={[styles.columnLeft, { flex: 0.4 }]} >
+              <View style={[styles.columnLeft, { flex: 0.4 }]}>
                 <Text style={{ color: Color.text, fontSize: 12 }}>LIMIT</Text>
-                <Text style={{ color: Color.mark, fontSize: 12 }}>0.5 {this.state.coins[this.state.selectedCoinIndex]}</Text>
+                <Text style={{ color: Color.mark, fontSize: 12 }}>
+                  0.5 {this.state.coins[this.state.selectedCoinIndex]}
+                </Text>
               </View>
             </View>
-            <Dash style={{width:'100%', height:1, marginTop: 5, marginBottom: 10}} dashThickness={1} dashColor={Color.light_gray}/>
+            <Dash
+              style={{
+                width: '100%',
+                height: 1,
+                marginTop: 5,
+                marginBottom: 10,
+              }}
+              dashThickness={1}
+              dashColor={Color.light_gray}
+            />
             <View style={styles.rowBetween} >
-              <Text style={{ color: Color.text, fontSize: 12 }}>{weekDay[dayIndex]}</Text>
+              <Text style={{ color: Color.text, fontSize: 12 }}>{weekDay}</Text>
               <Text style={{ color: Color.text, fontSize: 12 }}>TIME</Text>
             </View>
             <View style={styles.rowBetween} >
-              <Text style={{ color: Color.mark, fontSize: 14 }}>{dateString}</Text>
-              <Text style={{ color: Color.mark, fontSize: 14 }}>{timeString}</Text>
+              <Text style={{ color: Color.mark, fontSize: 14 }}>
+                {dateString}
+              </Text>
+              <Text style={{ color: Color.mark, fontSize: 14 }}>
+                {timeString}
+              </Text>
             </View>
           </NasdaPaper>
 
-          <View style={[styles.rowCenter, {width: '100%'}]} >
+          <View style={[styles.rowCenter, { width: '100%' }]}>
             <TouchableHighlight underlayColor={Color.button_underlay}
               style={styles.button}
-              onPress={() => this.createTransaction()}>
-              <Text style={{color: 'white', fontSize: 16}}>Start</Text>
+              onPress={() => this.createTransaction()}
+            >
+              <Text style={{ color: 'white', fontSize: 16 }}>Start</Text>
             </TouchableHighlight>
           </View>
           {/* <NasdaCard
@@ -465,22 +458,22 @@ export default class SendDetails extends Component {
     );
   }
 
-  filterAmountText = (text) => {
+  filterAmountText = text => {
     // const numbers = text.match(/\\d+\\.?\\d*/g)
     // console.log(numbers)
-    var hasPoint = false
-    var amount = ""
-    for (i = 0; i<text.length; i++) {
-      if (text[i] == '.' && hasPoint == false) {
-        hasPoint = true
-        amount += text[i]
+    var hasPoint = false;
+    var amount = '';
+    for (var i = 0; i < text.length; i++) {
+      if (text[i] === '.' && hasPoint === false) {
+        hasPoint = true;
+        amount += text[i];
       } else if (text[i] >= '0' && text[i] <= '9') {
-        amount += text[i]
+        amount += text[i];
       }
     }
-    this.setState({amount: amount})
-    console.log(this.state.amount)
-  }
+    this.setState({ amount: amount });
+    console.log(this.state.amount);
+  };
 }
 
 SendDetails.propTypes = {
@@ -543,7 +536,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  fullTextInput: { 
+  fullTextInput: {
     width: '100%',
     borderBottomColor: Color.light_gray,
     borderBottomWidth: 1,
@@ -567,6 +560,6 @@ const styles = {
     backgroundColor: Color.button,
     marginTop: 20,
     alignItems: 'center',
-    justifyContent: 'center'
-  }
-}
+    justifyContent: 'center',
+  },
+};

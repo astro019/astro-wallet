@@ -20,11 +20,18 @@ let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 export default class TransactionsList extends Component {
   static navigationOptions = {
     tabBarLabel: 'Transactions',
-    tabBarIcon: ({ tintColor, focused }) => (
-      focused ?
-        <Image source={require('../../img/tabicon/transaction_focus.png')} style={{ width: 25, height: 25 }} /> :
-        <Image source={require('../../img/tabicon/transaction.png')} style={{ width: 25, height: 25 }} />
-    ),
+    tabBarIcon: ({ tintColor, focused }) =>
+      focused ? (
+        <Image
+          source={require('../../img/tabIcon/transaction_focus.png')}
+          style={{ width: 25, height: 25 }}
+        />
+      ) : (
+        <Image
+          source={require('../../img/tabIcon/transaction.png')}
+          style={{ width: 25, height: 25 }}
+        />
+      ),
   };
 
   constructor(props) {

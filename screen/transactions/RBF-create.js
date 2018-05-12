@@ -19,11 +19,18 @@ let NasdaApp = require('../../NasdaApp');
 
 export default class SendCreate extends Component {
   static navigationOptions = {
-    tabBarIcon: ({ tintColor, focused }) => (
-      focused ?
-        <Image source={require('../../img/tabicon/transaction_focus.png')} style={{ width: 25, height: 25 }} /> :
-        <Image source={require('../../img/tabicon/transaction.png')} style={{ width: 25, height: 25 }} />
-    ),
+    tabBarIcon: ({ tintColor, focused }) =>
+      focused ? (
+        <Image
+          source={require('../../img/tabIcon/transaction_focus.png')}
+          style={{ width: 25, height: 25 }}
+        />
+      ) : (
+        <Image
+          source={require('../../img/tabIcon/transaction.png')}
+          style={{ width: 25, height: 25 }}
+        />
+      ),
   };
 
   constructor(props) {
