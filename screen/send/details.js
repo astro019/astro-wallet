@@ -1,30 +1,22 @@
 import React, { Component } from 'react';
-import ReactNative, { 
-  Text, 
-  ActivityIndicator, 
-  View, 
-  Image, 
-  TextInput, 
-  TouchableOpacity, 
-  TouchableHighlight,
-  Dimensions
-} from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
-import Feather from 'react-native-vector-icons/Feather'
-import { FormValidationMessage, Icon } from 'react-native-elements';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { TextField } from 'react-native-material-textfield';
-import Dash from 'react-native-dash';
-import { Color } from '../Constants'
 import {
-  NasdaSpacing20,
-  NasdaButton,
+  Text,
+  ActivityIndicator,
+  View,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  TouchableHighlight,
+  Dimensions,
+} from 'react-native';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import Feather from 'react-native-vector-icons/Feather';
+import { Icon } from 'react-native-elements';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import Dash from 'react-native-dash';
+import { Color } from '../Constants';
+import {
   SafeNasdaArea,
-  NasdaCard,
-  NasdaText,
-  NasdaFormInput,
-  NasdaSpacing,
   NasdaHeader,
   NasdaPaper,
   NasdaIcon,
@@ -36,17 +28,32 @@ let BigNumber = require('bignumber.js');
 let NasdaApp = require('../../NasdaApp');
 
 const btcAddressRx = /^[a-zA-Z0-9]{26,35}$/;
-const { width, height } = Dimensions.get('window')
+const { height } = Dimensions.get('window');
 
-const weekDay = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY']
+const weekDay = [
+  'SUNDAY',
+  'MONDAY',
+  'TUESDAY',
+  'WEDNESDAY',
+  'THURSDAY',
+  'FRIDAY',
+  'SATURDAY',
+]
 
 export default class SendDetails extends Component {
   static navigationOptions = {
-    tabBarIcon: ({ tintColor, focused }) => (
-      focused ?
-        <Image source={require('../../img/tabicon/send_focus.png')} style={{ width: 25, height: 25 }} /> :
-        <Image source={require('../../img/tabicon/send.png')} style={{ width: 25, height: 25 }} />
-    ),
+    tabBarIcon: ({ tintColor, focused }) =>
+      focused ? (
+        <Image
+          source={require('../../img/tabicon/send_focus.png')} 
+          style={{ width: 25, height: 25 }}
+        />
+      ) : (
+        <Image
+          source={require('../../img/tabicon/send.png')}
+          style={{ width: 25, height: 25 }}
+        />
+      ),
   };
 
   constructor(props) {
@@ -79,6 +86,7 @@ export default class SendDetails extends Component {
       amount: '',
       fee: '',
       memo: '',
+      coins: ['NSD', 'BTC'],
       selectedCoinIndex: 1,
     };
 
@@ -193,29 +201,29 @@ export default class SendDetails extends Component {
       );
     }
 
-    let date = new Date()
-    let month = date.getMonth() + 1
-    let year = date.getYear()
-    let day = date.getDate()
+    let date = new Date();
+    let month = date.getMonth() + 1;
+    let year = date.getYear();
+    let day = date.getDate();
 
-    var dateString = ''
-    if (month < 10) dateString += 0
-    dateString += month + '.'
-    if (day < 10) dateString += 0
-    dateString += day + '.' + (year + 1900)
+    var dateString = '';
+    if (month < 10) dateString += 0;
+    dateString += month + '.';
+    if (day < 10) dateString += 0;
+    dateString += day + '.' + (year + 1900);
 
-    var timeString = ''
-    var hour = date.getHours()
-    let minute = date.getMinutes()
-    let ampm = hour >= 12 ? 'PM' : 'AM'
-    hour = hour % 12
-    hour = hour ? hour : 12
-    if (hour < 10) timeString += '0'
-    timeString += hour + ':'
-    if (minute < 10) timeString += '0'
-    timeString += minute + ' ' + ampm
+    var timeString = '';
+    var hour = date.getHours();
+    let minute = date.getMinutes();
+    let ampm = hour >= 12 ? 'PM' : 'AM';
+    hour = hour % 12;
+    if (hour === 0) hour = 12;
+    if (hour < 10) timeString += '0';
+    timeString += hour + ':';
+    if (minute < 10) timeString += '0';
+    timeString += minute + ' ' + ampm;
 
-    let dayIndex = date.getDay()
+    let dayIndex = date.getDay();
 
     return (
       <SafeNasdaArea style={{ flex: 1, paddingTop: 20 }}>
@@ -225,7 +233,7 @@ export default class SendDetails extends Component {
               name="settings"
               color={Color.light_text}
               size={20}
-            // onPress={() => this.props.navigation.navigate('DrawerToggle')}
+              // onPress={() => this.props.navigation.navigate('DrawerToggle')}
             />
           }
           leftComponent={
@@ -233,7 +241,7 @@ export default class SendDetails extends Component {
               name="search"
               color={Color.light_text}
               size={20}
-            // onPress={() => this.props.navigation.navigate('DrawerToggle')}
+              // onPress={() => this.props.navigation.navigate('DrawerToggle')}
             />
           }
           centerComponent={{
@@ -242,72 +250,129 @@ export default class SendDetails extends Component {
           }}
         />
         <KeyboardAwareScrollView style={styles.view} containerStyle={styles.container} innerRef={ref => { this.scroll = ref }}>
-          <NasdaPaper buttons={['NSD', 'BTC']} initialButton={this.state.selectedCoinIndex}>
+          <NasdaPaper
+            options={this.state.coins}
+            initialOption={this.state.selectedCoinIndex}
+            onChangeOption={index =>
+              this.setState({
+                selectedCoinIndex: index,
+              })
+            }
+          >
             <View style={styles.rowBottom} >
               <View style={styles.columnLeft} >
-                <Text style={{paddingLeft: 5, color: Color.text, fontSize: 12}}>SENDING TO</Text>
+                <Text
+                  style={{
+                    paddingLeft: 5,
+                    color: Color.text,
+                    fontSize: 12,
+                  }}
+                >
+                SENDING TO
+                </Text>
                 <TextInput
                   style={styles.fullTextInput}
-                  underlineColorAndroid='transparent'
+                  underlineColorAndroid="transparent"
                   onChangeText={text => this.setState({ address: text })}
-                  placeholder='BTC Address'
+                  placeholder={
+                    this.state.coins[this.state.selectedCoinIndex] + ' Address'
+                  }
                   value={this.state.address}
                   onSubmitEditing={() => this.amountInput.focusInput()}
                 />
               </View>
-              <TouchableOpacity onPress={() => this.props.navigation.navigate('ScanQrAddress')}>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate('ScanQrAddress')}
+              >
                 <NasdaIcon
-                  icon={<SimpleLineIcons name='camera' color='white' size={20} />}
+                  icon={
+                    <SimpleLineIcons name="camera" color="white" size={20} />
+                  }
                 />
               </TouchableOpacity>
             </View>
             <View style={styles.amountRowBetween} >
-              <Feather name='minus' color={Color.mark} size={20} />
+              <Feather name="minus" color={Color.mark} size={20} />
               <View style={styles.rowCenter}>
                 <TextInput
-                  ref={o => this.amountInput = o}
+                  ref={o => (this.amountInput = o)}
                   style={styles.amountTextInput}
-                  onChangeText={this.filterAmountText}//({ amount: text })}
+                  onChangeText={this.filterAmountText}
                   fontSize={25}
                   textColor={Color.text}
                   value={this.state.amount}
-                  placeholder='0.00'
+                  placeholder="0.00"
                   onSubmitEditing={() => this.messageInput.focusInput()}
                 />
-                <Text style={[styles.amountTextInput, {marginLeft: 5}]} >BTC</Text>
+                <Text
+                  style={[
+                    styles.amountTextInput,
+                    {
+                      marginLeft: 5,
+                    },
+                  ]}
+                >
+                  {this.state.coins[this.state.selectedCoinIndex]}
+                </Text>
               </View>
-              <Feather name='plus' color={Color.mark} size={20} />
+              <Feather name="plus" color={Color.mark} size={20} />
             </View>
             <Text style={styles.fiatCurrency}>$350</Text>
             <View style={styles.rowBottom} >
               <View style={styles.columnLeft} >
-                <Text style={{ paddingLeft: 5, color: Color.text, fontSize: 12 }}>MESSAGE</Text>
+                <Text
+                  style={{
+                    paddingLeft: 5,
+                    color: Color.text,
+                    fontSize: 12,
+                  }}>
+                    MESSAGE
+                </Text>
                 <View style={styles.fullTextInput} >
                   <TextInput
-                    ref={o => this.messageInput = o}
+                    ref={o => (this.messageInput = o)}
                     activeLineWidth={200}
-                    style={{flex: 1}}
-                    underlineColorAndroid='transparent'
+                    style={{
+                      flex: 1,
+                    }}
+                    underlineColorAndroid="transparent"
                     onChangeText={text => this.setState({ memo: text })}
-                    placeholder='Hello, Input message here'
+                    placeholder="Hello, Input message here"
                     onSubmitEditing={() => this.amountInput.focusInput()}
                   />
-                  <Text style={{ marginLeft: 5, color: '#c9c9cc'}}>{this.state.memo.length.toString()}</Text>
+                  <Text
+                    style={{
+                      marginLeft: 5,
+                      color: '#c9c9cc',
+                    }}>
+                    {this.state.memo.length.toString()}
+                  </Text>
                 </View>
               </View>
             </View>
-            <View style={[styles.rowBottom, {marginTop: 10}]} >
+            <View
+              style={[
+                styles.rowBottom,
+                {
+                  marginTop: 10,
+                },
+              ]}
+            >
               <View style={styles.columnLeft} >
-                <Text style={{ color: Color.text, fontSize: 12 }}>TOTAL BALANCE</Text>
-                <Text style={{ color: Color.mark, fontSize: 12 }}>{this.state.fromWallet.getBalance()} BTC</Text>
+                <Text style={{ color: Color.text, fontSize: 12 }}>
+                  TOTAL BALANCE
+                </Text>
+                <Text style={{ color: Color.mark, fontSize: 12 }}>
+                  {this.state.fromWallet.getBalance()} {this.state.coins[this.state.selectedCoinIndex]}
+                </Text>
               </View>
-              <View style={[styles.columnLeft, {flex: 0.6}]} >
+              <View style={[styles.columnLeft, { flex: 0.6 }]}>
                 <Text style={{ color: Color.text, fontSize: 12 }}>FEE</Text>
-                <Text style={{ color: Color.mark, fontSize: 12 }}>{this.state.fromWallet.getBalance()} BTC</Text>
+                <Text style={{ color: Color.mark, fontSize: 12 }}>{this.state.fromWallet.getBalance()} {this.state.coins[this.state.selectedCoinIndex]}</Text>
               </View>
               <View style={[styles.columnLeft, { flex: 0.4 }]} >
                 <Text style={{ color: Color.text, fontSize: 12 }}>LIMIT</Text>
-                <Text style={{ color: Color.mark, fontSize: 12 }}>0.5 BTC</Text>
+                <Text style={{ color: Color.mark, fontSize: 12 }}>0.5 {this.state.coins[this.state.selectedCoinIndex]}</Text>
               </View>
             </View>
             <Dash style={{width:'100%', height:1, marginTop: 5, marginBottom: 10}} dashThickness={1} dashColor={Color.light_gray}/>

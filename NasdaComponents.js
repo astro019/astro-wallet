@@ -12,15 +12,15 @@ import {
   ListItem,
 } from 'react-native-elements';
 import { Color } from './screen/Constants.js'
-import { 
-  ActivityIndicator, 
-  ListView, 
-  View, 
-  Dimensions, 
-  Platform, 
-  TouchableHighlight, 
+import {
+  ActivityIndicator,
+  ListView,
+  View,
+  Dimensions,
+  Platform,
+  TouchableHighlight,
   TouchableOpacity,
-  Image 
+  Image
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 let NasdaApp = require('./NasdaApp');
@@ -81,7 +81,7 @@ export class NasdaLabel extends Component {
     if (this.props.style !== undefined && this.props.style.color !== undefined) {
       color = this.props.style.color
     }
-    return <Text {...this.props} style={[this.props.style, {color: color, fontSize: 12}]} />
+    return <Text {...this.props} style={[this.props.style, { color: color, fontSize: 12 }]} />
   }
 }
 
@@ -123,7 +123,7 @@ export class NasdaHeader extends Component {
         {...this.props}
         backgroundColor={NasdaApp.settings.brandingColor}
         height={40}
-        statusBarProps={{barStyle: 'light-content'}}
+        statusBarProps={{ barStyle: 'light-content' }}
         outerContainerStyles={{ height: Platform.OS === 'ios' ? 80 : 80, borderBottomWidth: 0 }}
       />
     );
@@ -198,10 +198,10 @@ export class NasdaWalletItem extends Component {
       <TouchableHighlight {...this.props} style={[styles.item, this.props.style]} underlayColor='#232951'>
         <View style={styles.row}>
           <FontAwesome name='bitcoin' color={Color.mark} size={20} />
-          <View style={[styles.column, {marginLeft: 10}]} >
+          <View style={[styles.column, { marginLeft: 10 }]} >
             {/* <Text>{this.props.data.} */}
-            <Text style={{color: '#f2f3f8', fontSize: 14}} >{this.props.data.getLabel()} </Text>
-            <Text style={{color: '#f2f3f8', fontSize: 14}} >{this.props.data.getBalance()} BTC </Text>
+            <Text style={{ color: '#f2f3f8', fontSize: 14 }} >{this.props.data.getLabel()} </Text>
+            <Text style={{ color: '#f2f3f8', fontSize: 14 }} >{this.props.data.getBalance()} BTC </Text>
           </View>
         </View>
       </TouchableHighlight>
@@ -213,30 +213,41 @@ export class NasdaPaper extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      buttonIndex: this.props.initialButton,
-      buttons: this.props.buttons
+      buttonIndex: this.props.initialOption,
+      buttons: this.props.buttons,
+      circleColor: this.props.circleColor ? this.props.circleColor : Color.mark,
     }
   }
   render() {
-    const iconSize = 60
     return (
       <View style={styles.paper}>
-        <View style={styles.paperButtonGroup} >
-        {
-            this.props.buttons != undefined && this.props.buttons.map((button, index) => (
-              <TouchableOpacity onPress={() => {
-                this.setState({buttonIndex: index})
-              }}>
-                <Text style={[styles.paperButton, { 
-                  backgroundColor: this.state.buttonIndex == index ? Color.mark : 'transparent',
-                  color: this.state.buttonIndex == index ? 'white' : Color.light_text}]}>{button}</Text>
-              </TouchableOpacity>
+        <View style={styles.paperButtonGroup}>
+          {this.props.options != undefined && this.props.options.map((button, index) => (
+            <TouchableOpacity
+              onPress={() => (
+                this.setState({ buttonIndex: index })
+                if (this.props.onChangeOption != undefined) {
+                  this.props.onChangeOption(index)
+                }
+              )
+            }>
+              <Text style={[styles.paperButton, {
+                backgroundColor: this.state.buttonIndex == index ? Color.mark : 'transparent',
+                color: this.state.buttonIndex == index ? 'white' : Color.light_text
+              }]}>{button}</Text>
+            </TouchableOpacity>
             ))
-        }
+          }
         </View>
         <Image style={styles.outline} source={require('./img/outline_top.png')} />
         <View {...this.props} style={[styles.paperContent, this.props.style]} />
-        <Image style={styles.outline} source={require('./img/outline_bottom.png')} />
+        <Image
+          style={styles.outline}
+          source={require('./img/outline_bottom.png')}
+        />
+        <View style={styles.paperHeader} >
+          <View style={[styles.paperCircle, { backgroundColor: this.state.circleColor }]} />
+        </View>
       </View>
     );
   }
@@ -253,7 +264,7 @@ export class NasdaIcon extends Component {
       bkColor = this.props.backgroundColor
     }
     return (
-      <View style={{ width: size, height: size, borderRadius: size, backgroundColor: bkColor, alignItems: 'center', justifyContent: 'center'}}>
+      <View style={{ width: size, height: size, borderRadius: size, backgroundColor: bkColor, alignItems: 'center', justifyContent: 'center' }}>
         {this.props.icon}
       </View>
     );
@@ -299,14 +310,27 @@ const styles = {
   paper: {
     width: '100%',
   },
+  paperHeader: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    height: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  paperCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+  },
   paperButtonGroup: {
     width: '100%',
-    height: 50,
+    height: 40,
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'flex-start',
     padding: 5,
-    backgroundColor: 'red'
   },
   paperButton: {
     fontSize: 12,
@@ -327,7 +351,7 @@ const styles = {
     paddingRight: 15,
     paddingBottom: 5,
     flexDirection: 'column',
-    alignItems:'center',
+    alignItems: 'center',
     justifyContent: 'flex-end',
     height: 350,
   }
