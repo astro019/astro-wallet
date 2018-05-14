@@ -2,6 +2,7 @@ export class AbstractWallet {
   constructor() {
     this.type = 'abstract';
     this.label = '';
+    this.symbol = '';
     this.secret = ''; // private key or recovery phrase
     this.balance = 0;
     this.transactions = [];
@@ -31,6 +32,11 @@ export class AbstractWallet {
 
   setLabel(newLabel) {
     this.label = newLabel;
+    return this;
+  }
+
+  setSymbol(newSymbol) {
+    this.symbol = newSymbol;
     return this;
   }
 

@@ -231,10 +231,15 @@ export default class SendDetails extends Component {
                 selectedCoinIndex: index,
               })
             }
-            icon={<SimpleLineIcons name="camera" color="white" size={20} />}
+            icon={
+              <Image
+                source={require('../../img/icon/ic_send.png')}
+                style={{ width: 60, height: 60 }}
+              />
+            }
           >
-            <View style={styles.rowBottom} >
-              <View style={styles.columnLeft} >
+            <View style={styles.rowBottom}>
+              <View style={styles.columnLeft}>
                 <Text
                   style={{
                     paddingLeft: 5,

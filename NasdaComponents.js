@@ -213,8 +213,7 @@ export class NasdaPaper extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      buttonIndex: this.props.initialOption,
-      buttons: this.props.buttons,
+      buttonIndex: this.props.initialWallet,
       circleColor: this.props.circleColor ? this.props.circleColor : Color.mark,
     }
   }
@@ -222,27 +221,29 @@ export class NasdaPaper extends Component {
     return (
       <View style={styles.paper}>
         <View style={styles.paperButtonGroup}>
-          {this.props.options != undefined && this.props.options.map((button, index) => (
-            <TouchableOpacity
-              onPress={() => {
-                  this.setState({ buttonIndex: index })
-                  if (this.props.onChangeOption !== undefined) {
-                    this.props.onChangeOption(index)
-                  }
-                }}
-             >
-              <Text
-                style={[
-                  styles.paperButton,
-                  {
-                    backgroundColor: this.state.buttonIndex == index ? Color.mark : 'transparent',
-                    color: this.state.buttonIndex == index ? 'white' : Color.light_text,
-                  }
-                ]}
+          {this.props.wallets !== undefined &&
+            this.props.wallets !== null &&
+            this.props.wallets.map((wallet, index) => (
+              <TouchableOpacity
+                onPress={() => {
+                    this.setState({ buttonIndex: index });
+                    if (this.props.onChangeWallet !== undefined) {
+                      this.props.onChangeWallet(index);
+                    }
+                  }}
               >
-                {button}
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={[
+                    styles.paperButton,
+                    {
+                      backgroundColor: this.state.buttonIndex === index ? Color.mark : 'transparent',
+                      color: this.state.buttonIndex === index ? 'white' : Color.light_text,
+                    }
+                  ]}
+                >
+                  {wallet.symbol}
+                </Text>
+              </TouchableOpacity>
             ))
           }
         </View>

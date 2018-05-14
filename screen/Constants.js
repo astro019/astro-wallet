@@ -12,3 +12,8 @@ export const Color = {
   light_gray: '#c9c9cc',
   light_text: '#8e92a2',
 };
+
+export const Coin = {
+  BTC: 'Bitcoin',
+  NSD: 'Nasdacoin',
+};

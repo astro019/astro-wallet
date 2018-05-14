@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {
-  TextInput,
   Image,
   Text,
   View,
@@ -8,24 +7,18 @@ import {
   TouchableHighlight,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Feather from 'react-native-vector-icons/Feather';
 import { Icon } from 'react-native-elements';
 import QRCode from 'react-native-qrcode';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Dash from 'react-native-dash';
 import {
   NasdaLoading,
   SafeNasdaArea,
   NasdaPaper,
   NasdaHeader,
-  NasdaButton,
-  NasdaSpacing,
-  NasdaCard,
 } from '../../NasdaComponents.js';
 import { Color } from '../Constants';
 import { getDate } from '../customAPI';
-import PropTypes from 'prop-types';
 let NasdaApp = require('../../NasdaApp');
 
 export default class ReceiveDetails extends Component {
@@ -47,20 +40,20 @@ export default class ReceiveDetails extends Component {
 
   constructor(props) {
     super(props);
-    let address = props.navigation.state.params.address;
     this.state = {
       isLoading: true,
-      address: address,
-      coins: ['NSD', 'BTC'],
-      selectedCoinIndex: 1,
+      wallets: null,
+      selectedWalletIndex: 1,
     };
-    console.log(JSON.stringify(address));
   }
 
   async componentDidMount() {
     console.log('wallets/details - componentDidMount');
-    this.setState({
-      isLoading: false,
+    setTimeout(() => {
+      this.setState({
+        wallets: NasdaApp.getWallets(),
+        isLoading: false,
+      });
     });
   }
 
@@ -70,6 +63,15 @@ export default class ReceiveDetails extends Component {
     }
 
     const { dateString, timeString, weekDay } = getDate();
+
+    var address;
+    var symbol;
+    address = symbol = '';
+    if (this.state.wallets !== null && this.state.wallets.length !== 0) {
+      address = this.state.wallets[this.state.selectedWalletIndex]._address;
+      symbol = this.state.wallets[this.state.selectedWalletIndex].symbol;
+      console.log(this.state.wallets);
+    }
 
     return (
       <SafeNasdaArea style={{ flex: 1, paddingTop: 20 }}>
@@ -101,26 +103,34 @@ export default class ReceiveDetails extends Component {
           innerRef={ref => (this.scroll = ref)}
         >
           <NasdaPaper
-            options={this.state.coins}
-            initialOption={this.state.selectedCoinIndex}
-            onChangeOption={index =>
+            wallets={this.state.wallets}
+            initialWallet={this.state.selectedWalletIndex}
+            onChangeWallet={index =>
               this.setState({
-                selectedCoinIndex: index,
+                selectedWalletIndex: index,
               })
             }
-            icon={<SimpleLineIcons name="camera" color="white" size={20} />}
+            icon={
+              <Image
+                source={require('../../img/icon/ic_receive.png')}
+                style={{ width: 60, height: 60 }}
+              />
+            }
           >
             <Text style={{ color: Color.text, fontSize: 14, marginBottom: 5 }}>
-              {this.state.coins[this.state.selectedCoinIndex]} ADDRESS
+              {symbol} ADDRESS
             </Text>
             <QRCode
-              value={this.state.address}
+              value={address}
               size={180}
               bgColor="white"
               fgColor={NasdaApp.settings.brandingColor}
             />
-            <Text style={{ color: Color.text, fontSize: 12, marginTop: 5 }}>
-              {this.state.address}
+            <Text
+              style={{ color: Color.text, fontSize: 12, marginTop: 5 }}
+              selectable
+            >
+              {address}
             </Text>
             {/* <View style={styles.amountRowBetween} >
               <Feather name="minus" color={Color.mark} size={20} />
@@ -143,7 +153,7 @@ export default class ReceiveDetails extends Component {
                     },
                   ]}
                 >
-                  {this.state.coins[this.state.selectedCoinIndex]}
+                  {this.state.wallets[this.state.selectedWalletIndex].symbol}
                 </Text>
               </View>
               <Feather name="plus" color={Color.mark} size={20} />
@@ -216,17 +226,6 @@ export default class ReceiveDetails extends Component {
     );
   }
 }
-
-ReceiveDetails.propTypes = {
-  navigation: PropTypes.shape({
-    goBack: PropTypes.function,
-    state: PropTypes.shape({
-      params: PropTypes.shape({
-        address: PropTypes.string,
-      }),
-    }),
-  }),
-};
 
 const { height } = Dimensions.get('window');
 

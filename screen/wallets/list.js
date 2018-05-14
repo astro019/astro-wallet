@@ -25,6 +25,7 @@ import {
   NasdaLabel,
   NasdaWalletItem
 } from '../../NasdaComponents.js';
+import { SegwitP2SHWallet } from '../../class';
 import { Icon } from 'react-native-elements';
 import { Color } from '../Constants.js'
 import PropTypes from 'prop-types';
@@ -73,6 +74,25 @@ export default class WalletsList extends Component {
       },
       () => {
         setTimeout(() => {
+          let wallets = NasdaApp.getWallets();
+          if (wallets === null || wallets.length === 0) {
+            setTimeout(async () => {
+              let bw = new SegwitP2SHWallet();
+              bw.setLabel('Bitcoin');
+              bw.setSymbol('BTC');
+              bw.generate();
+              NasdaApp.wallets.push(bw);
+
+              let nw = new SegwitP2SHWallet();
+              nw.setLabel('Nasdacoin');
+              nw.setSymbol('NSD');
+              nw.generate();
+              NasdaApp.wallets.push(nw);
+              await NasdaApp.saveToDisk();
+              EV(EV.enum.WALLETS_COUNT_CHANGED);
+            }, 1);
+          }
+          console.log(wallets);
           this.setState({
             isLoading: false,
             dataSource: ds.cloneWithRows(NasdaApp.getWallets()),
@@ -152,13 +172,13 @@ export default class WalletsList extends Component {
             dataSource={this.state.dataSource}
             renderRow={rowData => this.renderItem(rowData)}
           />
-          <NasdaButton
+          {/* <NasdaButton
             icon={{ name: 'plus-small', type: 'octicon' }}
             onPress={() => {
               navigate('AddWallet');
             }}
             title="Add Wallet"
-          />
+          /> */}
         </View>
       </SafeNasdaArea>
     );
