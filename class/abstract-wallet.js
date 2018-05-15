@@ -40,6 +40,10 @@ export class AbstractWallet {
     return this;
   }
 
+  getSymbol() {
+    return this.symbol;
+  }
+
   getSecret() {
     return this.secret;
   }

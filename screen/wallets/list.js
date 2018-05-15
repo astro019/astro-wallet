@@ -61,11 +61,17 @@ export default class WalletsList extends Component {
       isLoading: true,
     };
     EV(EV.enum.WALLETS_COUNT_CHANGED, this.refreshFunction.bind(this));
+    EV(EV.enum.WALLET_LOAD_FAILED, this.initWallets.bind(this));
   }
 
   async componentDidMount() {
     this.refreshFunction();
   } // end of componendDidMount
+
+  initWallets() {
+    NasdaApp.initWallets();
+    this.refreshFunction();
+  }
 
   refreshFunction() {
     this.setState(
@@ -75,23 +81,6 @@ export default class WalletsList extends Component {
       () => {
         setTimeout(() => {
           let wallets = NasdaApp.getWallets();
-          if (wallets === null || wallets.length === 0) {
-            setTimeout(async () => {
-              let bw = new SegwitP2SHWallet();
-              bw.setLabel('Bitcoin');
-              bw.setSymbol('BTC');
-              bw.generate();
-              NasdaApp.wallets.push(bw);
-
-              let nw = new SegwitP2SHWallet();
-              nw.setLabel('Nasdacoin');
-              nw.setSymbol('NSD');
-              nw.generate();
-              NasdaApp.wallets.push(nw);
-              await NasdaApp.saveToDisk();
-              EV(EV.enum.WALLETS_COUNT_CHANGED);
-            }, 1);
-          }
           console.log(wallets);
           this.setState({
             isLoading: false,
@@ -152,7 +141,7 @@ export default class WalletsList extends Component {
                 navigate('Send');
               }}>
               <View style={[styles.send_receive_button, {borderRightColor: 'white', borderRightWidth: 1}]}>
-                <FontAwesome name='send' color='white' size={40} />
+                <Image source={require('../../img/icon/ic_send.png')} style={{width: 60, height: 60}}/>
                 <Text style={styles.send_receive_text}>Send Money</Text>
               </View>
             </TouchableOpacity>
@@ -161,7 +150,7 @@ export default class WalletsList extends Component {
                 navigate('Receive');
               }}>
               <View style={[styles.send_receive_button, {borderLeftColor: 'white', borderLeftWidth: 1}]}>
-                <FontAwesome name='qrcode' color='white' size={40} />
+                <Image source={require('../../img/icon/ic_receive.png')} style={{ width: 60, height: 60 }} />
                 <Text style={styles.send_receive_text}>Request Money</Text>
               </View>
             </TouchableOpacity>

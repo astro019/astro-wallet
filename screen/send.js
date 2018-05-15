@@ -7,9 +7,9 @@ import create from './send/create';
 
 const SendNavigator = StackNavigator(
   {
-    SendList: {
-      screen: list,
-    },
+    // SendList: {
+    //   screen: list,
+    // },
     SendDetails: {
       screen: details,
     },

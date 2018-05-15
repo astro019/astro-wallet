@@ -201,7 +201,27 @@ export class NasdaWalletItem extends Component {
           <View style={[styles.column, { marginLeft: 10 }]} >
             {/* <Text>{this.props.data.} */}
             <Text style={{ color: '#f2f3f8', fontSize: 14 }} >{this.props.data.getLabel()} </Text>
-            <Text style={{ color: '#f2f3f8', fontSize: 14 }} >{this.props.data.getBalance()} BTC </Text>
+            <Text style={{ color: '#f2f3f8', fontSize: 14 }} >{this.props.data.getBalance()} {this.props.data.getSymbol()} </Text>
+          </View>
+        </View>
+      </TouchableHighlight>
+    );
+  }
+}
+
+export class NasdaTransactionItem extends Component {
+  render() {
+    return (
+      <TouchableHighlight {...this.props} style={[styles.item, this.props.style]} underlayColor='#232951'>
+        <View style={styles.row}>
+          <FontAwesome name='bitcoin' color={Color.mark} size={20} />
+          <View style={[styles.column, { marginLeft: 10 }]} >
+            {/* <Text>{this.props.data.} */}
+            <View style={styles.rowBetween}>
+              <Text style={{ color: '#f2f3f8', fontSize: 14 }} >{this.props.data.getLabel()} </Text>
+            </View>
+            <Text style={{ color: '#f2f3f8', fontSize: 14 }} >{this.props.data.getLabel()} </Text>
+            <Text style={{ color: '#f2f3f8', fontSize: 14 }} >{this.props.data.getBalance()} {this.props.data.getSymbol()} </Text>
           </View>
         </View>
       </TouchableHighlight>
@@ -324,12 +344,17 @@ const styles = {
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
+  },
+  rowBetween: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   column: {
     flexDirection: 'column',
     alignItems: "flex-start",
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   paper: {
     width: '100%',
@@ -368,7 +393,7 @@ const styles = {
   },
   outline: {
     width: '100%',
-    height: 15
+    height: 15,
   },
   paperContent: {
     paddingTop: 30,

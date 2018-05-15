@@ -50,6 +50,7 @@ export default class CameraExample extends React.Component {
     this.lastTimeIveBeenHere = +new Date();
 
     console.log('onBarCodeRead', ret);
+    // ret.data = 'KzH3gi8JkEDev6gTVKfLYBYRQ7vJYQkCekT53TatKNScL4fSGsiz';
     if (ret.data[0] === '6') {
       // password-encrypted, need to ask for password and decrypt
       console.log('trying to decrypt...');
@@ -111,7 +112,8 @@ export default class CameraExample extends React.Component {
         isLoading: true,
       },
       async () => {
-        newWallet.setLabel('New SegWit');
+        newWallet.setLabel('Nasdacoin');
+        newWallet.setSymbol('NSD');
         NasdaApp.wallets.push(newWallet);
         await NasdaApp.saveToDisk();
         this.props.navigation.navigate('WalletsList');
@@ -135,6 +137,10 @@ export default class CameraExample extends React.Component {
       },
       barCodeTypes: [Camera.Constants.BarCodeType.qr],
     });
+  }
+
+  async componentDidMount() {
+    // this.onBarCodeRead({data: ''});
   }
 
   render() {

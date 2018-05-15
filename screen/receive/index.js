@@ -19,6 +19,7 @@ import {
 } from '../../NasdaComponents.js';
 import { Color } from '../Constants';
 import { getDate } from '../customAPI';
+let EV = require('../../events');
 let NasdaApp = require('../../NasdaApp');
 
 export default class ReceiveDetails extends Component {
@@ -43,17 +44,19 @@ export default class ReceiveDetails extends Component {
     this.state = {
       isLoading: true,
       wallets: null,
-      selectedWalletIndex: 1,
+      selectedWalletIndex: 0,
     };
+
+    EV(EV.enum.WALLETS_COUNT_CHANGED, () => {
+      return this.componentDidMount();
+    });
   }
 
   async componentDidMount() {
     console.log('wallets/details - componentDidMount');
-    setTimeout(() => {
-      this.setState({
-        wallets: NasdaApp.getWallets(),
-        isLoading: false,
-      });
+    this.setState({
+      wallets: NasdaApp.getWallets(),
+      isLoading: false,
     });
   }
 
@@ -68,9 +71,17 @@ export default class ReceiveDetails extends Component {
     var symbol;
     address = symbol = '';
     if (this.state.wallets !== null && this.state.wallets.length !== 0) {
-      address = this.state.wallets[this.state.selectedWalletIndex]._address;
-      symbol = this.state.wallets[this.state.selectedWalletIndex].symbol;
+      address = this.state.wallets[this.state.selectedWalletIndex].getAddress();
+      symbol = this.state.wallets[this.state.selectedWalletIndex].getSymbol();
       console.log(this.state.wallets);
+    } else {
+      return (
+        <View style={{ flex: 1, paddingTop: 20 }}>
+          <Text>
+            System error: Source wallet not found (this should never happen)
+          </Text>
+        </View>
+      );
     }
 
     return (

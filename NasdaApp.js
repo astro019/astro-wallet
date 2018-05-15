@@ -21,8 +21,17 @@ async function startAndDecrypt(retry) {
   let success = await NasdaApp.loadFromDisk(password);
   if (success) {
     console.log('loaded from disk');
-    EV(EV.enum.WALLETS_COUNT_CHANGED);
-    EV(EV.enum.TRANSACTIONS_COUNT_CHANGED);
+    let wallets = NasdaApp.getWallets();
+    if (wallets === undefined || wallets === null || wallets.length === 0) {
+      console.log('=======Load Count zero');
+      EV(EV.enum.WALLET_LOAD_FAILED);
+    } else {
+      EV(EV.enum.WALLETS_COUNT_CHANGED);
+      EV(EV.enum.TRANSACTIONS_COUNT_CHANGED);
+    }
+  } else {
+    console.log('=======Load Failed');
+    EV(EV.enum.WALLET_LOAD_FAILED);
   }
 
   if (!success && password) {

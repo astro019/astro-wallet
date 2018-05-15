@@ -217,6 +217,21 @@ export class AppStorage {
     }
   }
 
+  async initWallets() {
+    let bw = new SegwitP2SHWallet();
+    bw.setLabel('Bitcoin');
+    bw.setSymbol('BTC');
+    bw.generate();
+    this.wallets.push(bw);
+
+    let nw = new SegwitP2SHWallet();
+    nw.setLabel('Nasdacoin');
+    nw.setSymbol('NSD');
+    nw.generate();
+    this.wallets.push(nw);
+    await this.saveToDisk();
+  }
+
   /**
    *
    * @returns {Array.<AbstractWallet>}
@@ -231,6 +246,14 @@ export class AppStorage {
       txs = txs.concat(wallet.transactions);
     }
     return txs;
+  }
+
+  getTransactionByIndex(index) {
+    if (index === -1) return this.getTransactions();
+    if (this.wallets.length > index) {
+      return this.wallets[index].transactions;
+    }
+    return null;
   }
 
   saveWallets() {}

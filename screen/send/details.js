@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Feather from 'react-native-vector-icons/Feather';
-import { Icon } from 'react-native-elements';
+import { Icon, FormValidationMessage } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Dash from 'react-native-dash';
 import { Color } from '../Constants';
@@ -21,6 +21,7 @@ import {
   NasdaHeader,
   NasdaPaper,
   NasdaIcon,
+  NasdaLoading,
 } from '../../NasdaComponents.js';
 import PropTypes from 'prop-types';
 const bip21 = require('bip21');
@@ -49,37 +50,21 @@ export default class SendDetails extends Component {
 
   constructor(props) {
     super(props);
-    let startTime = Date.now();
-    let address;
-    if (props.navigation.state.params)
-      address = props.navigation.state.params.address;
-    let fromAddress;
-    if (props.navigation.state.params)
-      fromAddress = props.navigation.state.params.fromAddress;
-    let fromWallet = {};
-
-    let startTime2 = Date.now();
-    for (let w of NasdaApp.getWallets()) {
-      if (w.getAddress() === fromAddress) {
-        fromWallet = w;
-      }
-    }
-
-    let endTime2 = Date.now();
-    console.log('getAddress() took', (endTime2 - startTime2) / 1000, 'sec');
 
     this.state = {
       errorMessage: false,
-      fromAddress: fromAddress,
-      fromWallet: fromWallet,
       isLoading: true,
-      address: address,
+      address: '',
       amount: '',
-      fee: '',
+      fee: '0.0',
       memo: '',
-      coins: ['NSD', 'BTC'],
-      selectedCoinIndex: 1,
+      wallets: null,
+      selectedWalletIndex: 0,
     };
+
+    EV(EV.enum.WALLETS_COUNT_CHANGED, () => {
+      return this.componentDidMount();
+    });
 
     EV(EV.enum.CREATE_TRANSACTION_NEW_DESTINATION_ADDRESS, data => {
       console.log('received event with ', data);
@@ -100,18 +85,16 @@ export default class SendDetails extends Component {
         }
       }
     });
-    let endTime = Date.now();
-    console.log('constructor took', (endTime - startTime) / 1000, 'sec');
+    // let endTime = Date.now();
+    // console.log('constructor took', (endTime - startTime) / 1000, 'sec');
   }
 
   async componentDidMount() {
-    let startTime = Date.now();
     console.log('send/details - componentDidMount');
     this.setState({
+      wallets: NasdaApp.getWallets(),
       isLoading: false,
     });
-    let endTime = Date.now();
-    console.log('componentDidMount took', (endTime - startTime) / 1000, 'sec');
   }
 
   recalculateAvailableBalance(balance, amount, fee) {
@@ -164,7 +147,7 @@ export default class SendDetails extends Component {
       fee: this.state.fee,
       address: this.state.address,
       memo: this.state.memo,
-      fromAddress: this.state.fromAddress,
+      fromAddress: this.state.wallets[this.state.selectedWalletIndex].getAddress(),
     });
   }
 
@@ -175,24 +158,23 @@ export default class SendDetails extends Component {
 
   render() {
     if (this.state.isLoading) {
-      return (
-        <View style={{ flex: 1, paddingTop: 20 }}>
-          <ActivityIndicator />
-        </View>
-      );
-    }
-
-    if (!this.state.fromWallet.getAddress) {
-      return (
-        <View style={{ flex: 1, paddingTop: 20 }}>
-          <Text>
-            System error: Source wallet not found (this should never happen)
-          </Text>
-        </View>
-      );
+      return <NasdaLoading />;
     }
 
     const { dateString, timeString, weekDay } = getDate();
+
+    var symbol;
+    var balance;
+    symbol = '';
+    balance = 0;
+    if (this.state.wallets !== null && this.state.wallets.length !== 0) {
+      console.log('=3#$#@$@#$%@#%@#');
+      console.log(this.state.wallets);
+      console.log(this.state.selectedWalletIndex);
+      symbol = this.state.wallets[this.state.selectedWalletIndex].getSymbol();
+      balance = this.state.wallets[this.state.selectedWalletIndex].getBalance();
+      console.log(this.state.wallets);
+    }
 
     return (
       <SafeNasdaArea style={{ flex: 1, paddingTop: 20 }}>
@@ -202,7 +184,7 @@ export default class SendDetails extends Component {
               name="settings"
               color={Color.light_text}
               size={20}
-              // onPress={() => this.props.navigation.navigate('DrawerToggle')}
+            // onPress={() => this.props.navigation.navigate('DrawerToggle')}
             />
           }
           leftComponent={
@@ -210,7 +192,7 @@ export default class SendDetails extends Component {
               name="search"
               color={Color.light_text}
               size={20}
-              // onPress={() => this.props.navigation.navigate('DrawerToggle')}
+            // onPress={() => this.props.navigation.navigate('DrawerToggle')}
             />
           }
           centerComponent={{
@@ -224,11 +206,11 @@ export default class SendDetails extends Component {
           innerRef={ref => (this.scroll = ref)}
         >
           <NasdaPaper
-            options={this.state.coins}
-            initialOption={this.state.selectedCoinIndex}
-            onChangeOption={index =>
+            wallets={this.state.wallets}
+            initialWallet={this.state.selectedWalletIndex}
+            onChangeWallet={index =>
               this.setState({
-                selectedCoinIndex: index,
+                selectedWalletIndex: index,
               })
             }
             icon={
@@ -253,9 +235,7 @@ export default class SendDetails extends Component {
                   style={styles.fullTextInput}
                   underlineColorAndroid="transparent"
                   onChangeText={text => this.setState({ address: text })}
-                  placeholder={
-                    this.state.coins[this.state.selectedCoinIndex] + ' Address'
-                  }
+                  placeholder={symbol + ' Address'}
                   value={this.state.address}
                   onSubmitEditing={() => this.amountInput.focusInput()}
                 />
@@ -291,14 +271,14 @@ export default class SendDetails extends Component {
                     },
                   ]}
                 >
-                  {this.state.coins[this.state.selectedCoinIndex]}
+                  {symbol}
                 </Text>
               </View>
               <Feather name="plus" color={Color.mark} size={20} />
             </View>
             <Text style={styles.fiatCurrency}>$350</Text>
-            <View style={styles.rowBottom} >
-              <View style={styles.columnLeft} >
+            <View style={styles.rowBottom}>
+              <View style={styles.columnLeft}>
                 <Text
                   style={{
                     paddingLeft: 5,
@@ -343,19 +323,19 @@ export default class SendDetails extends Component {
                   TOTAL BALANCE
                 </Text>
                 <Text style={{ color: Color.mark, fontSize: 12 }}>
-                  {this.state.fromWallet.getBalance()} {this.state.coins[this.state.selectedCoinIndex]}
+                  {balance} {symbol}
                 </Text>
               </View>
               <View style={[styles.columnLeft, { flex: 0.6 }]}>
                 <Text style={{ color: Color.text, fontSize: 12 }}>FEE</Text>
                 <Text style={{ color: Color.mark, fontSize: 12 }}>
-                  {this.state.fromWallet.getBalance()} {this.state.coins[this.state.selectedCoinIndex]}
+                  {this.state.fee} {symbol}
                 </Text>
               </View>
               <View style={[styles.columnLeft, { flex: 0.4 }]}>
                 <Text style={{ color: Color.text, fontSize: 12 }}>LIMIT</Text>
                 <Text style={{ color: Color.mark, fontSize: 12 }}>
-                  0.5 {this.state.coins[this.state.selectedCoinIndex]}
+                  0.5 {symbol}
                 </Text>
               </View>
             </View>
@@ -383,8 +363,11 @@ export default class SendDetails extends Component {
             </View>
           </NasdaPaper>
 
+          <FormValidationMessage>{this.state.errorMessage}</FormValidationMessage>
+
           <View style={[styles.rowCenter, { width: '100%' }]}>
-            <TouchableHighlight underlayColor={Color.button_underlay}
+            <TouchableHighlight
+              underlayColor={Color.button_underlay}
               style={styles.button}
               onPress={() => this.createTransaction()}
             >
@@ -485,12 +468,12 @@ SendDetails.propTypes = {
   navigation: PropTypes.shape({
     goBack: PropTypes.function,
     navigate: PropTypes.func,
-    state: PropTypes.shape({
-      params: PropTypes.shape({
-        address: PropTypes.string,
-        fromAddress: PropTypes.string,
-      }),
-    }),
+    // state: PropTypes.shape({
+    //   params: PropTypes.shape({
+    //     address: PropTypes.string,
+    //     fromAddress: PropTypes.string,
+    //   }),
+    // }),
   }),
 };
 

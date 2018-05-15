@@ -9,8 +9,11 @@ import {
   NasdaCard,
   NasdaText,
   NasdaListItem,
+  NasdaHeader,
+  NasdaTransactionItem,
 } from '../../NasdaComponents.js';
 import PropTypes from 'prop-types';
+import { Color } from '../Constants';
 let EV = require('../../events');
 /** @type {AppStorage} */
 let NasdaApp = require('../../NasdaApp');
@@ -58,8 +61,10 @@ export default class TransactionsList extends Component {
           this.setState({
             isLoading: false,
             final_balance: NasdaApp.getBalance(),
+            wallets: NasdaApp.getWallets(),
             dataSource: ds.cloneWithRows(NasdaApp.getTransactions()),
           });
+          console.log(NasdaApp.getTransactions());
         }, 1);
       },
     );
@@ -110,23 +115,28 @@ export default class TransactionsList extends Component {
     }
 
     return (
-      <SafeNasdaArea forceInset={{ horizontal: 'always' }} style={{ flex: 1 }}>
-        <Header
-          backgroundColor={NasdaApp.settings.brandingColor}
+      <SafeNasdaArea>
+        <NasdaHeader
+          rightComponent={
+            <Icon
+              name="settings"
+              color={Color.light_text}
+              size={20}
+              // onPress={() => this.props.navigation.navigate('DrawerToggle')}
+            />
+          }
           leftComponent={
             <Icon
-              name="menu"
-              color="#fff"
-              onPress={() => this.props.navigation.navigate('DrawerToggle')}
+              name="search"
+              color={Color.light_text}
+              size={20}
+              // onPress={() => this.props.navigation.navigate('DrawerToggle')}
             />
           }
           centerComponent={{
-            text: this.state.final_balance + ' BTC',
-            style: { color: '#fff', fontSize: 25 },
+            text: 'TRANSACTIONS',
+            style: { color: Color.light_text, fontSize: 14 },
           }}
-          rightComponent={
-            <Icon name="refresh" color="#fff" onPress={() => this.refresh()} />
-          }
         />
         <ListView
           style={{ height: 360 }}
@@ -174,6 +184,18 @@ export default class TransactionsList extends Component {
           }}
         />
       </SafeNasdaArea>
+    );
+  }
+
+  renderItem = rowData => {
+    const { navigate } = this.props.navigation;
+    return (
+      <NasdaTransactionItem
+        onPress={() => {
+          navigate('TransactionDetails', { hash: rowData.hash });
+        }}
+        data={rowData}
+      />
     );
   }
 }

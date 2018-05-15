@@ -40,7 +40,7 @@ const Tabs = TabNavigator(
   {
     tabBarPosition: 'bottom',
     animationEnabled: false,
-    initialRouteName: 'Send',
+    initialRouteName: 'Wallets',
     swipeEnabled: false,
     tabBarOptions: {
       showLabel: false,
