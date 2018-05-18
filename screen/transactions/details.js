@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Image } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Icon } from 'react-native-elements';
 import {
   NasdaButton,
   SafeNasdaArea,
@@ -9,8 +9,10 @@ import {
   NasdaSpacing,
   NasdaLoading,
   NasdaSpacing20,
+  NasdaHeader,
 } from '../../NasdaComponents.js';
 import PropTypes from 'prop-types';
+import { Color } from '../Constants';
 /** @type {AppStorage} */
 let NasdaApp = require('../../NasdaApp');
 
@@ -32,21 +34,16 @@ export default class TransactionsDetails extends Component {
 
   constructor(props) {
     super(props);
-    let hash = props.navigation.state.params.hash;
-    let foundTx = {};
+    let foundTx = props.navigation.state.params.transaction;
+    // let foundTx = {};
     let from = [];
     let to = [];
-    for (let tx of NasdaApp.getTransactions()) {
-      if (tx.hash === hash) {
-        console.log(tx);
-        foundTx = tx;
-        for (let input of foundTx.inputs) {
-          from = from.concat(input.addresses);
-        }
-        for (let output of foundTx.outputs) {
-          to = to.concat(output.addresses);
-        }
-      }
+
+    for (let input of foundTx.inputs) {
+      from = from.concat(input.addresses);
+    }
+    for (let output of foundTx.outputs) {
+      to = to.concat(output.addresses);
     }
 
     this.state = {
@@ -64,17 +61,43 @@ export default class TransactionsDetails extends Component {
     });
   }
 
+  txMemo(hash) {
+    if (NasdaApp.tx_metadata[hash] && NasdaApp.tx_metadata[hash]['memo']) {
+      return ' | ' + NasdaApp.tx_metadata[hash]['memo'];
+    }
+    return '';
+  }
+
   render() {
     if (this.state.isLoading) {
       return <NasdaLoading />;
     }
 
     return (
-      <SafeNasdaArea
-        forceInset={{ horizontal: 'always' }}
-        style={{ flex: 1, paddingTop: 20 }}
-      >
-        <NasdaSpacing />
+      <SafeNasdaArea>
+        <NasdaHeader
+          rightComponent={
+            <Icon
+              name="settings"
+              color={Color.light_text}
+              size={20}
+            // onPress={() => this.props.navigation.navigate('DrawerToggle')}
+            />
+          }
+          leftComponent={
+            <Icon
+              name="search"
+              color={Color.light_text}
+              size={20}
+              // onPress={() => this.props.navigation.navigate('DrawerToggle')}
+            />
+          }
+          centerComponent={{
+            text: 'TRANSACTIONS',
+            style: { color: Color.light_text, fontSize: 14 },
+          }}
+        />
+
         <NasdaCard
           title={'Transaction details'}
           style={{ alignItems: 'center', flex: 1 }}
@@ -145,7 +168,7 @@ TransactionsDetails.propTypes = {
     navigate: PropTypes.func,
     state: PropTypes.shape({
       params: PropTypes.shape({
-        hash: PropTypes.string,
+        transaction: PropTypes.object,
       }),
     }),
   }),

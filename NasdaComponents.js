@@ -211,17 +211,32 @@ export class NasdaWalletItem extends Component {
 
 export class NasdaTransactionItem extends Component {
   render() {
+    const { style, data } = this.props;
+    const type = data.value > 0 ? 'Received' : 'Sent';
+    const color = data.value > 0 ? Color.positive : Color.negative;
+    const date = data.received
+      .replace(['T'], ' ')
+      .replace(['Z'], ' ')
+      .split('.')[0];
+
+    const icon =
+      data.value > 0
+        ? require('./img/icon/transaction_received.png')
+        : require('./img/icon/transaction_sent.png');
+
     return (
-      <TouchableHighlight {...this.props} style={[styles.item, this.props.style]} underlayColor='#232951'>
-        <View style={styles.row}>
-          <FontAwesome name='bitcoin' color={Color.mark} size={20} />
-          <View style={[styles.column, { marginLeft: 10 }]} >
-            {/* <Text>{this.props.data.} */}
-            <View style={styles.rowBetween}>
-              <Text style={{ color: '#f2f3f8', fontSize: 14 }} >{this.props.data.getLabel()} </Text>
+      <TouchableHighlight {...this.props} underlayColor='#232951'>
+        <View style={[styles.item, style]}>
+          <View style={styles.row}>
+            <Image source={icon} style={styles.transactionIcon}/>
+            <View style={[styles.column, { marginLeft: 10 }]}>
+              <Text style={{ color: 'white', fontSize: 16 }}>{data.label}</Text>
+              <Text style={{ color: Color.light_text, fontSize: 14 }}>{date}</Text>
             </View>
-            <Text style={{ color: '#f2f3f8', fontSize: 14 }} >{this.props.data.getLabel()} </Text>
-            <Text style={{ color: '#f2f3f8', fontSize: 14 }} >{this.props.data.getBalance()} {this.props.data.getSymbol()} </Text>
+          </View>
+          <View style={styles.columnRight}>
+            <Text style={{ color: color, fontSize: 14 }}>{data.value / 100000000} {data.symbol}</Text>
+            <Text style={{ color: Color.light_text, fontSize: 14 }}>{type}</Text>
           </View>
         </View>
       </TouchableHighlight>
@@ -356,6 +371,11 @@ const styles = {
     alignItems: "flex-start",
     justifyContent: 'center',
   },
+  columnRight: {
+    flexDirection: 'column',
+    alignItems: "flex-end",
+    justifyContent: 'center',
+  },
   paper: {
     width: '100%',
   },
@@ -405,5 +425,9 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'flex-end',
     height: 350,
-  }
-}
+  },
+  transactionIcon: {
+    width: 35,
+    height: 35,
+  },
+};

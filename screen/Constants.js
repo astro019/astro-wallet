@@ -1,7 +1,7 @@
 export const Color = {
   text: '#383b44',
   positive: '#00ffe5',
-  negative: '#c82164',
+  negative: '#e32269',
   normal: 'white',
   background: '#191c2e',
   toggle: '#5d6ce8',
@@ -16,4 +16,10 @@ export const Color = {
 export const Coin = {
   BTC: 'Bitcoin',
   NSD: 'Nasdacoin',
+};
+
+export const TransactionType = {
+  ALL: 'ALL',
+  RECEIVED: 'RECEIVED',
+  SENT: 'SENT',
 };

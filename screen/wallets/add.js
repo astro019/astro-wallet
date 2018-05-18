@@ -91,7 +91,8 @@ export default class WalletsAdd extends Component {
               this.props.navigation.goBack();
               setTimeout(async () => {
                 let w = new SegwitP2SHWallet();
-                w.setLabel('New SegWit');
+                w.setLabel('Nasdacoin');
+                w.setSymbol('NSD')
                 w.generate();
                 NasdaApp.wallets.push(w);
                 await NasdaApp.saveToDisk();

@@ -1,5 +1,6 @@
 import { AsyncStorage } from 'react-native';
 import { LegacyWallet, SegwitP2SHWallet, SegwitBech32Wallet } from './';
+import { TransactionType } from '../screen/Constants';
 let encryption = require('../encryption');
 
 export class AppStorage {
@@ -248,12 +249,22 @@ export class AppStorage {
     return txs;
   }
 
-  getTransactionByIndex(index) {
-    if (index === -1) return this.getTransactions();
+  getTransactionsByFilter(index, type = TransactionType.ALL) {
+    var myTransactions = null;
+    if (index === this.wallets.length) myTransactions = this.getTransactions();
     if (this.wallets.length > index) {
-      return this.wallets[index].transactions;
+      myTransactions = this.wallets[index].transactions;
     }
-    return null;
+    if (type === TransactionType.RECEIVED) {
+      myTransactions = myTransactions.filter(
+        transaction => transaction.value > 0,
+      );
+    } else if (type === TransactionType.SENT) {
+      myTransactions = myTransactions.filter(
+        transaction => transaction.value < 0,
+      );
+    }
+    return myTransactions;
   }
 
   saveWallets() {}

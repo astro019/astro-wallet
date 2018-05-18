@@ -218,6 +218,8 @@ export class LegacyWallet extends AbstractWallet {
         }
         console.log('came out', value);
         tx.value += value;
+        tx.symbol = this.symbol;
+        tx.label = this.label;
         // end
       }
     } catch (err) {

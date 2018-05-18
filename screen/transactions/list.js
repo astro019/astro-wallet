@@ -1,19 +1,14 @@
 import React, { Component } from 'react';
-import { ListView, Image } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Header, Icon } from 'react-native-elements';
+import { ListView, Image, TouchableOpacity, View, Text } from 'react-native';
+import { Icon } from 'react-native-elements';
 import {
   NasdaLoading,
-  NasdaList,
   SafeNasdaArea,
-  NasdaCard,
-  NasdaText,
-  NasdaListItem,
   NasdaHeader,
   NasdaTransactionItem,
 } from '../../NasdaComponents.js';
 import PropTypes from 'prop-types';
-import { Color } from '../Constants';
+import { Color, TransactionType } from '../Constants';
 let EV = require('../../events');
 /** @type {AppStorage} */
 let NasdaApp = require('../../NasdaApp');
@@ -41,6 +36,14 @@ export default class TransactionsList extends Component {
     super(props);
     this.state = {
       isLoading: true,
+      walletIndex: 0,
+      walletSymbols: ['ALL'],
+      types: [
+        TransactionType.ALL,
+        TransactionType.RECEIVED,
+        TransactionType.SENT,
+      ],
+      type: TransactionType.ALL,
     };
 
     EV(EV.enum.TRANSACTIONS_COUNT_CHANGED, this.refreshFunction.bind(this));
@@ -48,7 +51,11 @@ export default class TransactionsList extends Component {
 
   async componentDidMount() {
     console.log('transaction/list- componentDidMount');
+    // this.refresh();
     this.refreshFunction();
+    this.setState({
+      walletIndex: this.state.wallets.length,
+    });
   } // end
 
   refreshFunction() {
@@ -58,23 +65,46 @@ export default class TransactionsList extends Component {
       },
       () => {
         setTimeout(() => {
+          let wallets = NasdaApp.getWallets();
+          var symbols = [];
+          for (var i = 0; i < wallets.length; i++) {
+            symbols.push(wallets[i].getSymbol());
+          }
+          symbols.push('ALL');
+          if (this.state.walletIndex >= symbols.length) {
+            this.setState({
+              walletIndex: symbols.length - 1,
+            });
+          }
           this.setState({
             isLoading: false,
-            final_balance: NasdaApp.getBalance(),
-            wallets: NasdaApp.getWallets(),
-            dataSource: ds.cloneWithRows(NasdaApp.getTransactions()),
+            wallets: wallets,
+            walletSymbols: symbols,
+            transactions: NasdaApp.getTransactionsByFilter(
+              this.state.walletIndex,
+              this.state.type,
+            ),
           });
-          console.log(NasdaApp.getTransactions());
         }, 1);
       },
     );
   }
 
-  txMemo(hash) {
-    if (NasdaApp.tx_metadata[hash] && NasdaApp.tx_metadata[hash]['memo']) {
-      return ' | ' + NasdaApp.tx_metadata[hash]['memo'];
-    }
-    return '';
+  filterWallet(index) {
+    this.setState({
+      walletIndex: index,
+      transactions: NasdaApp.getTransactionsByFilter(index, this.state.type),
+    });
+  }
+
+  filterType(type) {
+    this.setState({
+      type: type,
+      transactions: NasdaApp.getTransactionsByFilter(
+        this.state.walletIndex,
+        type,
+      ),
+    });
   }
 
   refresh() {
@@ -99,7 +129,6 @@ export default class TransactionsList extends Component {
 
           that.setState({
             isLoading: false,
-            final_balance: NasdaApp.getBalance(),
             dataSource: ds.cloneWithRows(NasdaApp.getTransactions()),
           });
         }, 10);
@@ -108,11 +137,11 @@ export default class TransactionsList extends Component {
   }
 
   render() {
-    const { navigate } = this.props.navigation;
-
     if (this.state.isLoading) {
       return <NasdaLoading />;
     }
+
+    let dataSource = ds.cloneWithRows(this.state.transactions);
 
     return (
       <SafeNasdaArea>
@@ -138,51 +167,56 @@ export default class TransactionsList extends Component {
             style: { color: Color.light_text, fontSize: 14 },
           }}
         />
-        <ListView
-          style={{ height: 360 }}
-          enableEmptySections
-          dataSource={this.state.dataSource}
-          renderRow={rowData => {
-            return (
-              <NasdaListItem
-                avatar={
-                  <Icon
-                    color={(() => {
-                      return (
-                        (rowData.confirmations &&
-                          ((rowData.value < 0 && '#900') || '#080')) ||
-                        '#ebebeb'
-                      );
-                    })()}
-                    name={(() => {
-                      return (
-                        (rowData.value < 0 && 'call-made') ||
-                        'call-received'
-                      );
-                    })()}
-                  />
-                }
-                title={
-                  rowData.value / 100000000 +
-                  ' BTC' +
-                  this.txMemo(rowData.hash)
-                }
-                subtitle={
-                  rowData.received
-                    .replace(['T'], ' ')
-                    .replace(['Z'], ' ')
-                    .split('.')[0] +
-                  ' | conf: ' +
-                  rowData.confirmations +
-                  '\nYOLO'
-                }
-                onPress={() => {
-                  navigate('TransactionDetails', { hash: rowData.hash });
-                }}
-              />
-            );
-          }}
-        />
+        <View style={styles.view}>
+          <View style={styles.rowContainerBetween}>
+            <View style={styles.rowLeft}>
+              {this.state.types.map(type => (
+                <TouchableOpacity onPress={() => this.filterType(type)}>
+                  <Text
+                    style={[
+                      styles.symbolButton,
+                      {
+                        backgroundColor: this.state.type === type ? Color.mark : 'transparent',
+                        color: this.state.type === type ? 'white' : Color.light_text,
+                      },
+                    ]}
+                  >
+                    {type}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <View style={styles.rowLeft}>
+              {this.state.walletSymbols.map((symbol, index) => (
+                <TouchableOpacity onPress={() => this.filterWallet(index)}>
+                  <Text
+                    style={[
+                      styles.symbolButton,
+                      {
+                        backgroundColor:
+                          this.state.walletIndex === index
+                            ? Color.mark
+                            : 'transparent',
+                        color:
+                          this.state.walletIndex === index
+                            ? 'white'
+                            : Color.light_text,
+                      },
+                    ]}
+                  >
+                    {symbol}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+          <ListView
+            style={{ height: 360 }}
+            enableEmptySections
+            dataSource={dataSource}
+            renderRow={this.renderItem}
+          />
+        </View>
       </SafeNasdaArea>
     );
   }
@@ -192,16 +226,44 @@ export default class TransactionsList extends Component {
     return (
       <NasdaTransactionItem
         onPress={() => {
-          navigate('TransactionDetails', { hash: rowData.hash });
+          navigate('TransactionDetails', { transaction: rowData });
         }}
         data={rowData}
       />
     );
-  }
+  };
 }
 
 TransactionsList.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
   }),
+};
+
+const styles = {
+  view: {
+    width: '100%',
+    height: '100%',
+    paddingLeft: 15,
+    paddingRight: 15,
+  },
+  rowContainerBetween: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  rowLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  symbolButton: {
+    fontSize: 12,
+    marginLeft: 3,
+    marginRight: 3,
+    paddingLeft: 3,
+    paddingRight: 3,
+    borderRadius: 3,
+  },
 };
