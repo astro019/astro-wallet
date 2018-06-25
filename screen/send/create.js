@@ -21,12 +21,12 @@ export default class SendCreate extends Component {
     tabBarIcon: ({ tintColor, focused }) =>
       focused ? (
         <Image
-          source={require('../../img/tabIcon/send_focus.png')}
+          source={require('../../img/tabIcons/send_focus.png')}
           style={{ width: 25, height: 25 }}
         />
       ) : (
         <Image
-          source={require('../../img/tabIcon/send.png')}
+          source={require('../../img/tabIcons/send.png')}
           style={{ width: 25, height: 25 }}
         />
       ),

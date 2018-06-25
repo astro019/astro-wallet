@@ -23,12 +23,12 @@ export default class Settings extends Component {
     tabBarIcon: ({ tintColor, focused }) =>
       focused ? (
         <Image
-          source={require('../img/tabIcon/graph_focus.png')}
+          source={require('../img/tabIcons/graph_focus.png')}
           style={{ width: 25, height: 25 }}
         />
       ) : (
         <Image
-          source={require('../img/tabIcon/graph.png')}
+          source={require('../img/tabIcons/graph.png')}
           style={{ width: 25, height: 25 }}
         />
       ),

@@ -28,12 +28,12 @@ export default class WalletsAdd extends Component {
     tabBarIcon: ({ tintColor, focused }) =>
       focused ? (
         <Image
-          source={require('../../img/tabIcon/wallet_focus.png')}
+          source={require('../../img/tabIcons/wallet_focus.png')}
           style={{ width: 25, height: 25 }}
         />
       ) : (
         <Image
-          source={require('../../img/tabIcon/wallet.png')}
+          source={require('../../img/tabIcons/wallet.png')}
           style={{ width: 25, height: 25 }}
         />
       ),

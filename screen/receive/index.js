@@ -28,12 +28,12 @@ export default class ReceiveDetails extends Component {
     tabBarIcon: ({ tintColor, focused }) =>
       focused ? (
         <Image
-          source={require('../../img/tabIcon/request_focus.png')}
+          source={require('../../img/tabIcons/request_focus.png')}
           style={{ width: 25, height: 25 }}
         />
       ) : (
         <Image
-          source={require('../../img/tabIcon/request.png')}
+          source={require('../../img/tabIcons/request.png')}
           style={{ width: 25, height: 25 }}
         />
       ),
