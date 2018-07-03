@@ -3,7 +3,7 @@ import { TabNavigator } from 'react-navigation';
 import transactions from './screen/transactions';
 import wallets from './screen/wallets';
 import send from './screen/send';
-import settins from './screen/settings';
+import graph from './screen/graph';
 import receive from './screen/receive';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Color } from './screen/Constants'
@@ -32,15 +32,16 @@ const Tabs = TabNavigator(
       screen: receive,
       path: 'receive',
     },
-    Settings: {
-      screen: settins,
-      path: 'settings',
+    Graph: {
+      screen: graph,
+      path: 'graph',
     },
   },
   {
     tabBarPosition: 'bottom',
     animationEnabled: false,
     initialRouteName: 'Wallets',
+    // initialRouteName: 'Graph',
     swipeEnabled: false,
     tabBarOptions: {
       showLabel: false,

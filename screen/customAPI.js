@@ -38,3 +38,13 @@ export function getDate() {
     weekDay: weekDay[dayIndex],
   };
 }
+
+export async function getBitcoinMarketPrice(timespan = 'all', startDate = undefined) {
+  var url = `https://blockchain.info/charts/market-price?format=json&timespan=${timespan}`;
+  if (startDate) {
+    url += '&start=' + startDate;
+  }
+  var response = await fetch(url);
+  response = await response.json();
+  return response.values;
+}

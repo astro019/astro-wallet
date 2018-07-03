@@ -11,6 +11,7 @@ export const Color = {
   mark: '#536ed9',
   light_gray: '#c9c9cc',
   light_text: '#8e92a2',
+  chart_background: '#1d223b',
 };
 
 export const Coin = {

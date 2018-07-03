@@ -82,7 +82,7 @@ export default class SendList extends Component {
             />
           }
           centerComponent={{
-            text: 'Choose a wallet to send from',
+            text: 'PRICE',
             style: { color: '#fff', fontSize: 25 },
           }}
         />

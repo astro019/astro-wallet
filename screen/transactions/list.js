@@ -15,6 +15,8 @@ let NasdaApp = require('../../NasdaApp');
 
 let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 
+var intervalId = null;
+
 export default class TransactionsList extends Component {
   static navigationOptions = {
     tabBarLabel: 'Transactions',
@@ -51,6 +53,7 @@ export default class TransactionsList extends Component {
 
   async componentDidMount() {
     console.log('transaction/list- componentDidMount');
+    intervalId = setInterval(() => this.refresh(), 10000);
     // this.refresh();
     this.refreshFunction();
     this.setState({
@@ -107,33 +110,51 @@ export default class TransactionsList extends Component {
     });
   }
 
-  refresh() {
-    this.setState(
-      {
-        isLoading: true,
-      },
-      async function() {
-        let that = this;
-        setTimeout(async function() {
-          // more responsive
-          let noErr = true;
-          try {
-            await NasdaApp.fetchWalletTransactions();
-            await NasdaApp.fetchWalletBalances();
-          } catch (err) {
-            noErr = false;
-            console.warn(err);
-          }
-          if (noErr) await NasdaApp.saveToDisk(); // caching
-          EV(EV.enum.WALLETS_COUNT_CHANGED); // TODO: some other event type?
+  // refresh() {
+  //   this.setState(
+  //     {
+  //       isLoading: true,
+  //     },
+  //     async function() {
+  //       let that = this;
+  //       setTimeout(async function() {
+  //         // more responsive
+  //         let noErr = true;
+  //         try {
+  //           await NasdaApp.fetchWalletTransactions();
+  //           await NasdaApp.fetchWalletBalances();
+  //         } catch (err) {
+  //           noErr = false;
+  //           console.warn(err);
+  //         }
+  //         if (noErr) await NasdaApp.saveToDisk(); // caching
+  //         EV(EV.enum.WALLETS_COUNT_CHANGED); // TODO: some other event type?
 
-          that.setState({
-            isLoading: false,
-            dataSource: ds.cloneWithRows(NasdaApp.getTransactions()),
-          });
-        }, 10);
-      },
-    );
+  //         that.setState({
+  //           isLoading: false,
+  //           dataSource: ds.cloneWithRows(NasdaApp.getTransactions()),
+  //         });
+  //       }, 10);
+  //     },
+  //   );
+  // }
+
+  async refresh() {
+    let noErr = true;
+    try {
+      await NasdaApp.fetchWalletTransactions();
+      await NasdaApp.fetchWalletBalances();
+    } catch (err) {
+      noErr = false;
+      console.warn(err);
+    }
+    if (noErr) await NasdaApp.saveToDisk(); // caching
+    EV(EV.enum.WALLETS_COUNT_CHANGED); // TODO: some other event type?
+
+    this.setState({
+      dataSource: ds.cloneWithRows(NasdaApp.getTransactions()),
+    });
+    console.log("refresh Transactions");
   }
 
   render() {
